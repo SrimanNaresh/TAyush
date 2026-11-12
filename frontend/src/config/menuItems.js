@@ -9,8 +9,8 @@
 // as one wide panel with a column per sub-menu.
 // Module pages are added here in their phases:
 import { LAB_MENU } from '../modules/lab/menu.js';
-import { PHARMACY_MENU } from '../modules/pharmacy/menu.js';
-import { CLINIC_MENU, CLINIC_DASHBOARDS, REGISTRATION_MENU, CLINIC_SETTINGS, BILLING_MENU } from '../modules/clinic/menu.js';
+import { PHARMACY_MENU, PHARMACY_REPORTS } from '../modules/pharmacy/menu.js';
+import { CLINIC_MENU, CLINIC_DASHBOARDS, REGISTRATION_MENU, CLINIC_SETTINGS, BILLING_MENU, CLINIC_REPORTS } from '../modules/clinic/menu.js';
 
 export const MENU_GROUPS = [
   // A group whose only page has the group's own name shows as a plain link.
@@ -22,17 +22,37 @@ export const MENU_GROUPS = [
     ],
   },
   { group: 'Registration', items: REGISTRATION_MENU },
+  // Order (user, 2026-11-12): Dashboard, Registration, Clinic, Pharmacy, Lab,
+  // Billing, Reports, Configuration.
   { group: 'Clinic', items: CLINIC_MENU },
-  { group: 'Billing', items: BILLING_MENU },
   { group: 'Pharmacy', items: PHARMACY_MENU },
   { group: 'Lab', items: LAB_MENU },
+  { group: 'Billing', items: BILLING_MENU },
   {
-    group: 'Settings',
+    group: 'Reports',
     items: [
-      { key: 'settings.organisation', label: 'Organisation Details', to: '/settings/organisation' },
-      { key: 'settings.user', label: 'User Master', to: '/settings/user' },
-      { key: 'settings.menu-access', label: 'Menu Access', to: '/settings/menu-access' },
-      ...CLINIC_SETTINGS,
+      { label: 'Clinic Reports', submenu: CLINIC_REPORTS },
+      { label: 'Pharmacy Reports', submenu: PHARMACY_REPORTS },
+    ],
+  },
+  {
+    group: 'Configuration', // was Settings; menu keys stay settings.*
+    // Two sections (like Pharmacy / Lab), so the top bar shows them as cards.
+    items: [
+      {
+        label: 'Organisation',
+        submenu: [
+          { key: 'settings.organisation', label: 'Organisation Details', to: '/settings/organisation' },
+          ...CLINIC_SETTINGS,
+        ],
+      },
+      {
+        label: 'Users',
+        submenu: [
+          { key: 'settings.user', label: 'User Master', to: '/settings/user' },
+          { key: 'settings.menu-access', label: 'Menu Access', to: '/settings/menu-access' },
+        ],
+      },
     ],
   },
 ].filter((g) => g.items.length > 0);

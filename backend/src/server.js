@@ -10,6 +10,8 @@ import manifestRoutes from './core/routes/manifest.js';
 import userRoutes from './core/routes/users.js';
 import menuAccessRoutes from './core/routes/menuAccess.js';
 import organisationRoutes from './core/routes/organisation.js';
+import planRoutes from './core/routes/plan.js';
+import activityRoutes from './core/routes/activity.js';
 import labRoutes from './lab/index.js';
 import pharmacyRoutes from './pharmacy/index.js';
 import clinicRoutes from './clinic/index.js';
@@ -44,6 +46,8 @@ app.use('/api', (req, res, next) => {
 app.use('/api/core/users', userRoutes);
 app.use('/api/core/menu-access', menuAccessRoutes);
 app.use('/api/core/organisation', organisationRoutes);
+app.use('/api/core/plan', planRoutes);
+app.use('/api/core/activity', activityRoutes);
 
 // Modules
 app.use('/api/lab', labRoutes);

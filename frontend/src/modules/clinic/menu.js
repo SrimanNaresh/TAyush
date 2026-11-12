@@ -12,11 +12,22 @@ export const CLINIC_DASHBOARDS = [
   { key: 'clinic.dashboard.doctor', label: 'Doctor Dashboard', to: '/clinic/dashboard/doctor' },
 ];
 
+// Two sections (like Pharmacy / Lab), so the top bar shows them as cards.
 export const REGISTRATION_MENU = [
-  { key: 'clinic.registration.employee', label: 'Employee', to: '/clinic/registration/employee' },
-  { key: 'clinic.registration.employee-list', label: 'Employee List', to: '/clinic/registration/employee-list' },
-  { key: 'clinic.registration.patient', label: 'Patient', to: '/clinic/registration/patient' },
-  { key: 'clinic.registration.patient-list', label: 'Patient List', to: '/clinic/registration/patient-list' },
+  {
+    label: 'Patient',
+    submenu: [
+      { key: 'clinic.registration.patient', label: 'Patient Details', to: '/clinic/registration/patient' },
+      { key: 'clinic.registration.patient-list', label: 'List', to: '/clinic/registration/patient-list' },
+    ],
+  },
+  {
+    label: 'Employee',
+    submenu: [
+      { key: 'clinic.registration.employee', label: 'Employee Details', to: '/clinic/registration/employee' },
+      { key: 'clinic.registration.employee-list', label: 'List', to: '/clinic/registration/employee-list' },
+    ],
+  },
 ];
 
 // Clinic Master and the letter-pad setup sit in the main Settings menu.
@@ -26,13 +37,30 @@ export const CLINIC_SETTINGS = [
 ];
 
 // Billing sits in the main menu (config/menuItems.js).
+// Two sections (like Pharmacy / Lab), so the top bar shows them as cards.
 export const BILLING_MENU = [
-  { key: 'clinic.billing.patient-bill', label: 'Patient Bill', to: '/clinic/billing/patient-bill' },
-  { key: 'clinic.billing.month-wise', label: 'Month Wise', to: '/clinic/billing/month-wise' },
-  { key: 'clinic.billing.custom', label: 'Custom', to: '/clinic/billing/custom' },
+  {
+    label: 'Bill Entry',
+    submenu: [
+      { key: 'clinic.billing.patient-bill', label: 'Patient Bill', to: '/clinic/billing/patient-bill' },
+    ],
+  },
+  {
+    label: 'Bill Reports',
+    submenu: [
+      { key: 'clinic.billing.month-wise', label: 'Month Wise', to: '/clinic/billing/month-wise' },
+      { key: 'clinic.billing.custom', label: 'Custom', to: '/clinic/billing/custom' },
+    ],
+  },
 ];
 
 // Order (user, 2026-11-12): Patient Queue, Consultation, Pharmacy, Lab, Reports.
+// In the main Reports menu (config/menuItems.js).
+export const CLINIC_REPORTS = [
+  { key: 'clinic.reports.prescriptions', label: 'Patient Prescriptions', to: '/clinic/reports/prescriptions' },
+  { key: 'clinic.reports.follow-up-patients', label: 'Follow Up Patients', to: '/clinic/reports/follow-up-patients' },
+];
+
 export const CLINIC_MENU = [
   {
     label: 'Patient Queue',
@@ -70,10 +98,8 @@ export const CLINIC_MENU = [
     label: 'Reports',
     submenu: [
       { key: 'clinic.reports.patient-list', label: 'Patient List', to: '/clinic/reports/patient-list' },
-      { key: 'clinic.reports.prescriptions', label: 'Patient Prescriptions', to: '/clinic/reports/prescriptions' },
       { key: 'clinic.reports.patient-records', label: 'Patient Records', to: '/clinic/reports/patient-records' },
       { key: 'clinic.reports.date-wise-visit-list', label: 'Date Wise Visit List', to: '/clinic/reports/date-wise-visit-list' },
-      { key: 'clinic.reports.follow-up-patients', label: 'Follow Up Patients', to: '/clinic/reports/follow-up-patients' },
     ],
   },
 ];

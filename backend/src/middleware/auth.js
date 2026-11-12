@@ -16,14 +16,19 @@ export async function requireAuth(req, res, next) {
   try {
     const pool = await getPool();
     const r = await pool.request().input('id', sql.Int, payload.userId)
-      .query('SELECT UserId, Username, FullName, Role, IsActive, LinkedPatientId FROM AppUser WHERE UserId = @id');
+      .query('SELECT UserId, Username, FullName, Role, IsActive, LinkedPatientId, IsSuperAdmin FROM AppUser WHERE UserId = @id');
     const u = r.recordset[0];
     if (!u || !u.IsActive) return res.status(401).json({ error: 'Your login is not active' });
-    req.user = { userId: u.UserId, username: u.Username, fullName: u.FullName, role: u.Role, linkedPatientId: u.LinkedPatientId };
+    req.user = { userId: u.UserId, username: u.Username, fullName: u.FullName, role: u.Role, linkedPatientId: u.LinkedPatientId, isSuperAdmin: !!u.IsSuperAdmin };
     next();
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+}
+
+export function superAdminOnly(req, res, next) {
+  if (!req.user?.isSuperAdmin) return res.status(403).json({ error: 'Only a Super Admin can do this' });
+  next();
 }
 
 export function adminOnly(req, res, next) {

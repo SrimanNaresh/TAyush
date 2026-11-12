@@ -39,6 +39,37 @@ CREATE TABLE dbo.AppUser (
     CreatedAt       DATETIME NOT NULL CONSTRAINT DF_AppUser_Created DEFAULT GETDATE()
 );
 
+-- Super Admin (software owner): an Admin who also manages the plan and other
+-- Super Admins. Stored as a flag so every existing Admin check still applies.
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name='IsSuperAdmin' AND Object_ID=Object_ID('AppUser'))
+    ALTER TABLE dbo.AppUser ADD IsSuperAdmin BIT NOT NULL CONSTRAINT DF_AppUser_SuperAdmin DEFAULT 0;
+
+-- Plan and validity of this installation (one row, Id 1), set by a Super Admin.
+IF OBJECT_ID('dbo.Subscription','U') IS NULL
+CREATE TABLE dbo.Subscription (
+    Id          INT PRIMARY KEY CONSTRAINT CK_Subscription_Single CHECK (Id = 1),
+    PlanName    NVARCHAR(100) NOT NULL,
+    StartDate   DATE NULL,
+    ValidUntil  DATE NULL,
+    Notes       NVARCHAR(500) NULL,
+    Modules     NVARCHAR(1000) NULL,
+    UpdatedAt   DATETIME NOT NULL CONSTRAINT DF_Subscription_Updated DEFAULT GETDATE(),
+    UpdatedBy   NVARCHAR(100) NULL
+);
+-- Menu Rights: the main menus included in the plan, as a JSON array of menu
+-- names (NULL = every menu). Dashboard and Configuration are always included.
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name='Modules' AND Object_ID=Object_ID('Subscription'))
+    ALTER TABLE dbo.Subscription ADD Modules NVARCHAR(1000) NULL;
+
+-- Plan master: the plans a Super Admin can pick on the Validity tab.
+IF OBJECT_ID('dbo.PlanMaster','U') IS NULL
+CREATE TABLE dbo.PlanMaster (
+    PlanId     INT IDENTITY(1,1) PRIMARY KEY,
+    Name       NVARCHAR(100) NOT NULL CONSTRAINT UQ_PlanMaster_Name UNIQUE,
+    IsActive   BIT NOT NULL CONSTRAINT DF_PlanMaster_Active DEFAULT 1,
+    CreatedAt  DATETIME NOT NULL CONSTRAINT DF_PlanMaster_Created DEFAULT GETDATE()
+);
+
 IF OBJECT_ID('dbo.MenuAccess','U') IS NULL
 CREATE TABLE dbo.MenuAccess (
     AccessId     INT IDENTITY(1,1) PRIMARY KEY,

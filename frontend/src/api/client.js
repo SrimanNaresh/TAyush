@@ -62,6 +62,22 @@ export const organisationApi = {
 };
 export const clinicApi = organisationApi;
 
+// Plan and validity (everyone reads; only a Super Admin saves).
+export const planApi = {
+  get: () => api.get('/core/plan').then((r) => r.data),
+  save: (data) => api.put('/core/plan', data).then((r) => r.data),
+  // Plan master (the list of plans): everyone reads, Super Admin changes
+  plans: () => api.get('/core/plan/plans').then((r) => r.data),
+  addPlan: (name) => api.post('/core/plan/plans', { name }).then((r) => r.data),
+  renamePlan: (id, name) => api.put(`/core/plan/plans/${id}`, { name }).then((r) => r.data),
+  removePlan: (id) => api.delete(`/core/plan/plans/${id}`).then((r) => r.data),
+};
+
+// Recent activity across Clinic, Pharmacy and Lab (Admin only).
+export const activityApi = {
+  list: (limit = 25) => api.get('/core/activity', { params: { limit } }).then((r) => r.data),
+};
+
 // Cross-module pre-fill (Phase 5): a prescription with its medicines matched
 // to Pharmacy items and its lab tests matched to Lab tests.
 export const linkApi = {

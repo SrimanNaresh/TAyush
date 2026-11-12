@@ -3,15 +3,20 @@ import { Save, Search, Pencil, Trash2, Users, ShieldCheck } from 'lucide-react';
 import { Spinner, EmptyState, Modal, Toast, CardHeader } from '../../components/ui.jsx';
 import { useToast } from '../../hooks/useToast.js';
 import { userApi } from '../../api/client.js';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { patientApi } from '../../modules/clinic/api.js';
 
 // Roles for Clinic, Pharmacy and Lab logins. What each login can open is set
 // per page in Menu Access; only Admin manages users and settings.
 // 'Patient' is a Clinic patient-portal login linked to one patient record.
 const ROLES = ['Staff', 'Admin', 'Doctor', 'Reception', 'Pharmacist', 'Lab', 'Patient'];
+// 'Super Admin' (software owner; manages the plan) is offered only to a Super Admin.
+const SUPER = 'Super Admin';
 const EMPTY = { username: '', fullName: '', password: '', isActive: true, role: 'Staff', linkedPatientId: '' };
 
 export default function UserMaster() {
+  const { user: me } = useAuth();
+  const roles = me?.isSuperAdmin ? [SUPER, ...ROLES] : ROLES;
   const { toast, show } = useToast();
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
@@ -116,7 +121,7 @@ export default function UserMaster() {
           <div>
             <label className="label">Role</label>
             <select className="input" value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value, linkedPatientId: '' }))}>
-              {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+              {(editing?.Role === SUPER && !roles.includes(SUPER) ? [SUPER, ...roles] : roles).map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
           <div>
@@ -227,7 +232,7 @@ export default function UserMaster() {
                 value={editing.Role || 'Staff'}
                 onChange={(e) => setEditing({ ...editing, Role: e.target.value, LinkedPatientId: e.target.value === 'Patient' ? editing.LinkedPatientId : null })}
               >
-                {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                {(editing?.Role === SUPER && !roles.includes(SUPER) ? [SUPER, ...roles] : roles).map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             {editing.Role === 'Patient' && (

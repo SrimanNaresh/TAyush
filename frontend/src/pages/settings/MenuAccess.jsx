@@ -4,6 +4,7 @@ import { Spinner, EmptyState, Toast, CardHeader } from '../../components/ui.jsx'
 import { useToast } from '../../hooks/useToast.js';
 import { userApi, menuAccessApi } from '../../api/client.js';
 import { MENU_GROUPS, ALL_MENU_ITEMS, ACCESS_LEVELS } from '../../config/menuItems.js';
+import { usePlan, planAllowsGroup } from '../../hooks/usePlan.js';
 
 const emptyAccess = () => {
   const m = {};
@@ -62,6 +63,7 @@ function AccessRow({ item, access, setLevel }) {
 }
 
 export default function MenuAccess() {
+  const plan = usePlan();
   const { toast, show } = useToast();
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
@@ -184,7 +186,8 @@ export default function MenuAccess() {
             <Spinner />
           ) : (
             <div className="space-y-6">
-              {MENU_GROUPS.map((g) => (
+              {/* Only the main menus in the plan's Menu Rights (Configuration > Clinic Master > Validity) */}
+              {MENU_GROUPS.filter((g) => planAllowsGroup(plan, g.group)).map((g) => (
                 <div key={g.group}>
                   <p className="section-title mb-2">{g.group}</p>
                   <div className="space-y-1.5">

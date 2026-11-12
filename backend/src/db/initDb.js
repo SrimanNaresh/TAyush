@@ -55,6 +55,9 @@ async function init() {
       console.log('Seeded first user: Admin (password from ADMIN_INITIAL_PASSWORD)');
     }
 
+    // Super Admin logins are created on purpose (the software owner chose
+    // 'Sriman', 2026-11-12); init-db never promotes anyone by itself.
+
     console.log('Database initialised:', process.env.DB_NAME);
     process.exit(0);
   } catch (err) {

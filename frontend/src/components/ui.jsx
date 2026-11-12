@@ -4,8 +4,8 @@ import { sectionOf } from '../config/tones.js';
 
 export function PageHeader({ title, actions }) {
   return (
-    <div className="no-print mb-4 flex flex-col gap-3 border-b border-ink-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
-      <h1 className="text-lg font-bold tracking-tight text-ink-800 sm:text-xl">{title}</h1>
+    <div className="no-print mb-2 flex flex-col gap-2 border-b border-ink-100 pb-1.5 sm:flex-row sm:items-center sm:justify-between">
+      <h1 className="text-base font-bold leading-tight tracking-tight text-ink-800 sm:text-lg">{title}</h1>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>
   );

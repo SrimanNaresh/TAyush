@@ -11,12 +11,14 @@ import { MENU_GROUPS, makeAllowed } from '../config/menuItems.js';
 import { MENU_TONE_OF, MENU_TONES } from '../config/tones.js';
 import { menuAccessApi } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { usePlan, planAllowsGroup } from '../hooks/usePlan.js';
 
 export const GROUP_ICONS = {
   Dashboard: LayoutDashboard,
   Registration: UserPlus,
   Billing: Receipt,
   Settings: Settings,
+  Configuration: Settings,
   Reports: FileText,
   Pharmacy: Package,
   Item: Package,
@@ -34,6 +36,14 @@ export const GROUP_ICONS = {
 // falls back to Pill when a label isn't listed here.
 const SUBMENU_ICONS = {
   Medication: Pill,
+  Patient: UserCheck,
+  'Bill Entry': Receipt,
+  'Clinic Reports': Stethoscope,
+  'Pharmacy Reports': Package,
+  'Bill Reports': BarChart3,
+  Organisation: Building2,
+  Users: ShieldCheck,
+  Employee: Users,
   Pharmacy: Package,
   Lab: TestTube,
   Consultation: Stethoscope,
@@ -505,6 +515,7 @@ function filterNode(node, allowed) {
 // (see makeAllowed in config/menuItems.js).
 export function useMenu() {
   const { user } = useAuth();
+  const plan = usePlan();
   const [access, setAccess] = useState(null); // null = not loaded yet; Map of menuKey -> AccessLevel
 
   useEffect(() => {
@@ -516,12 +527,13 @@ export function useMenu() {
 
   return useMemo(() => {
     const allowed = makeAllowed(user, access);
-    return MENU_GROUPS.map((g) => {
+    // Main menus outside the plan's Menu Rights are hidden (a Super Admin sees all).
+    return MENU_GROUPS.filter((g) => user?.isSuperAdmin || planAllowsGroup(plan, g.group)).map((g) => {
       const children = g.items.map((it) => filterNode(it, allowed)).filter(Boolean);
       const only = children.length === 1 && !children[0].submenu && children[0].label === g.group ? children[0] : null;
       return { type: 'group', label: g.group, icon: GROUP_ICONS[g.group] || ClipboardList, children, direct: only?.to || null };
     }).filter((g) => g.children.length > 0);
-  }, [access, user]);
+  }, [access, user, plan]);
 }
 
 // Every page under the given nodes as { trail, label, to }, for the sidebar

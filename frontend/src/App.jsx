@@ -7,6 +7,7 @@ import { useAuth } from './context/AuthContext.jsx';
 import { useAppName } from './hooks/useAppName.js';
 import Login from './pages/Login.jsx';
 import ChangePassword from './components/ChangePassword.jsx';
+import PlanBanner from './components/PlanBanner.jsx';
 
 const DashboardRedirect = lazy(() => import('./pages/DashboardRedirect.jsx'));
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
@@ -133,6 +134,7 @@ function AppLayout({ appName }) {
         </header>
 
         <TopNav open={navOpen} side={navSide} />
+        <PlanBanner />
       </div>
       <MobileMenu />
 

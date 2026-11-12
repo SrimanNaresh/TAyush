@@ -184,13 +184,13 @@ export default function Dashboard() {
   return (
     <div className="space-y-3 pb-2">
       {/* Welcome banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-brand-gradient p-4 text-white shadow-elevated sm:p-5">
+      <div className="relative overflow-hidden rounded-xl bg-brand-gradient px-4 py-2.5 text-white shadow-card sm:px-5 sm:py-3">
         <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-white/10" />
         <div className="pointer-events-none absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/5" />
         <div className="relative flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-12 font-medium text-white/75">{today}</p>
-            <h1 className="mt-0.5 font-display text-xl font-bold leading-tight sm:text-2xl">{greeting()}, {user?.username || 'there'}</h1>
+            <h1 className="font-display text-lg font-bold leading-tight sm:text-xl">{greeting()}, {user?.username || 'there'}</h1>
             <p className="mt-0.5 text-13 text-white/80">{pharmacy ? `Here's how ${pharmacy} is doing today.` : "Here's how the pharmacy is doing today."}</p>
           </div>
           <button type="button" onClick={load} disabled={loading} title="Refresh" aria-label="Refresh" className="-mr-1 -mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 backdrop-blur transition-colors hover:bg-white/25">
@@ -199,7 +199,7 @@ export default function Dashboard() {
         </div>
         {/* One row everywhere: on a phone each button is the icon over a short
             label; from tablets up the full label sits beside the icon. */}
-        <div className="relative mt-3 grid grid-cols-4 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
+        <div className="relative mt-2 grid grid-cols-4 gap-1.5 sm:flex sm:flex-wrap sm:gap-2">
           {actions.map(({ to, icon: Icon, label, short }) => (
             <Link key={to} to={to} className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-white px-1 py-1.5 text-11 font-semibold text-brand-700 shadow-sm transition-transform hover:-translate-y-0.5 sm:inline-flex sm:flex-row sm:gap-1.5 sm:px-3 sm:py-2 sm:text-13">
               <Icon size={16} className="shrink-0" />

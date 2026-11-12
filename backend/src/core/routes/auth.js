@@ -12,6 +12,7 @@ const toPayload = (u) => ({
   fullName: u.FullName || null,
   role: u.Role,
   linkedPatientId: u.LinkedPatientId || null,
+  isSuperAdmin: !!u.IsSuperAdmin,
 });
 
 router.post('/login', async (req, res) => {
@@ -22,7 +23,7 @@ router.post('/login', async (req, res) => {
     const result = await pool
       .request()
       .input('u', sql.NVarChar, username.trim())
-      .query('SELECT UserId, Username, FullName, PasswordHash, IsActive, Role, LinkedPatientId FROM AppUser WHERE Username = @u');
+      .query('SELECT UserId, Username, FullName, PasswordHash, IsActive, Role, LinkedPatientId, IsSuperAdmin FROM AppUser WHERE Username = @u');
     const user = result.recordset[0];
     if (!user || !user.IsActive || !verifyPassword(password, user.PasswordHash)) {
       return res.status(401).json({ error: 'Invalid username or password' });
@@ -35,8 +36,8 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/me', requireAuth, (req, res) => {
-  const { userId, username, fullName, role, linkedPatientId } = req.user;
-  res.json({ userId, username, fullName, role, linkedPatientId });
+  const { userId, username, fullName, role, linkedPatientId, isSuperAdmin } = req.user;
+  res.json({ userId, username, fullName, role, linkedPatientId, isSuperAdmin });
 });
 
 // Any signed-in login changes its own password (from Lab's change-password).

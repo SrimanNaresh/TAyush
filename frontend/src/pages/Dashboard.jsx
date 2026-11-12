@@ -4,6 +4,7 @@ import { CardHeader } from '../components/ui.jsx';
 import { useMenu } from '../components/TopNav.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { MENU_TONE_OF, MENU_TONES } from '../config/tones.js';
+import SuperDashboard from './SuperDashboard.jsx';
 
 // Suite home: one card per module the signed-in login may use, listing its
 // pages (filtered by Menu Access). Module dashboards (pharmacy figures, lab
@@ -15,6 +16,9 @@ function pagesOf(nodes, trail = []) {
 export default function Dashboard() {
   const { user } = useAuth();
   const menu = useMenu().filter((g) => g.label !== 'Dashboard');
+
+  // Admin / Super Admin: only the all-activity page (screens are in the menu).
+  if (user?.role === 'Admin') return <SuperDashboard />;
 
   return (
     <div className="space-y-4">

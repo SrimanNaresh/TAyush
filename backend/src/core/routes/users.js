@@ -9,12 +9,18 @@ const router = Router();
 // per page in Menu Access; the role only marks Admin (manages users/settings)
 // and Patient (portal login locked to its LinkedPatientId).
 export const ROLES = ['Admin', 'Doctor', 'Reception', 'Pharmacist', 'Lab', 'Staff', 'Patient'];
-const COLUMNS = 'INSERTED.UserId, INSERTED.Username, INSERTED.FullName, INSERTED.IsActive, INSERTED.CreatedAt, INSERTED.Role, INSERTED.LinkedPatientId';
+// 'Super Admin' is shown and chosen like a role but stored as Role 'Admin' +
+// IsSuperAdmin = 1, so every Admin rule applies to it. Only a Super Admin can
+// grant it, take it away, or change a Super Admin's login.
+const SUPER = 'Super Admin';
+const COLUMNS = "INSERTED.UserId, INSERTED.Username, INSERTED.FullName, INSERTED.IsActive, INSERTED.CreatedAt, CASE WHEN INSERTED.IsSuperAdmin = 1 THEN 'Super Admin' ELSE INSERTED.Role END AS Role, INSERTED.LinkedPatientId";
 
 function readBody(body) {
   const { username, fullName, password, isActive = true, role = 'Staff', linkedPatientId } = body;
-  const effectiveRole = ROLES.includes(role) ? role : 'Staff';
+  const isSuperAdmin = role === SUPER;
+  const effectiveRole = isSuperAdmin ? 'Admin' : ROLES.includes(role) ? role : 'Staff';
   return {
+    isSuperAdmin,
     username: username?.trim() || '',
     fullName: fullName?.trim() || null,
     password,
@@ -33,7 +39,8 @@ router.get('/', adminOnly, async (req, res) => {
       .request()
       .input('search', sql.NVarChar, `%${search}%`)
       .query(`
-        SELECT u.UserId, u.Username, u.FullName, u.IsActive, u.CreatedAt, u.Role, u.LinkedPatientId, p.Name AS LinkedPatientName
+        SELECT u.UserId, u.Username, u.FullName, u.IsActive, u.CreatedAt,
+               CASE WHEN u.IsSuperAdmin = 1 THEN 'Super Admin' ELSE u.Role END AS Role, u.LinkedPatientId, p.Name AS LinkedPatientName
         FROM AppUser u
         LEFT JOIN Patient p ON p.PatientId = u.LinkedPatientId
         WHERE (@search = '%%' OR u.Username LIKE @search OR u.FullName LIKE @search)
@@ -45,7 +52,7 @@ router.get('/', adminOnly, async (req, res) => {
   }
 });
 
-router.get('/roles', (req, res) => res.json(ROLES));
+router.get('/roles', (req, res) => res.json(req.user?.isSuperAdmin ? [SUPER, ...ROLES] : ROLES));
 
 router.post('/', adminOnly, async (req, res) => {
   try {
@@ -53,6 +60,7 @@ router.post('/', adminOnly, async (req, res) => {
     if (!b.username) return res.status(400).json({ error: 'Username is required' });
     if (!b.password) return res.status(400).json({ error: 'Password is required' });
     if (b.role === 'Patient' && !b.linkedPatientId) return res.status(400).json({ error: 'A linked patient is required for the Patient role' });
+    if (b.isSuperAdmin && !req.user.isSuperAdmin) return res.status(403).json({ error: 'Only a Super Admin can create a Super Admin' });
     const pool = await getPool();
     const dupe = await pool.request().input('u', sql.NVarChar, b.username)
       .query('SELECT COUNT(*) AS n FROM AppUser WHERE Username = @u');
@@ -64,8 +72,9 @@ router.post('/', adminOnly, async (req, res) => {
       .input('active', sql.Bit, b.isActive ? 1 : 0)
       .input('role', sql.NVarChar, b.role)
       .input('patientId', sql.Int, b.linkedPatientId)
-      .query(`INSERT INTO AppUser (Username, FullName, PasswordHash, IsActive, Role, LinkedPatientId)
-              OUTPUT ${COLUMNS} VALUES (@u, @fullName, @p, @active, @role, @patientId)`);
+      .input('super', sql.Bit, b.isSuperAdmin ? 1 : 0)
+      .query(`INSERT INTO AppUser (Username, FullName, PasswordHash, IsActive, Role, LinkedPatientId, IsSuperAdmin)
+              OUTPUT ${COLUMNS} VALUES (@u, @fullName, @p, @active, @role, @patientId, @super)`);
     res.status(201).json(result.recordset[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -80,7 +89,13 @@ router.put('/:id', adminOnly, async (req, res) => {
     if (b.role === 'Patient' && !b.linkedPatientId) return res.status(400).json({ error: 'A linked patient is required for the Patient role' });
     const isSelf = Number(req.params.id) === Number(req.user.userId);
     if (isSelf && (b.role !== 'Admin' || !b.isActive)) return res.status(400).json({ error: 'You cannot remove Admin or switch off your own login' });
+    if (isSelf && req.user.isSuperAdmin && !b.isSuperAdmin) return res.status(400).json({ error: 'You cannot remove Super Admin from your own login' });
     const pool = await getPool();
+    const target = await pool.request().input('id', sql.Int, req.params.id).query('SELECT IsSuperAdmin FROM AppUser WHERE UserId = @id');
+    if (!target.recordset[0]) return res.status(404).json({ error: 'User not found' });
+    if ((target.recordset[0].IsSuperAdmin || b.isSuperAdmin) && !req.user.isSuperAdmin) {
+      return res.status(403).json({ error: 'Only a Super Admin can change a Super Admin login' });
+    }
     const dupe = await pool.request()
       .input('u', sql.NVarChar, b.username)
       .input('id', sql.Int, req.params.id)
@@ -92,8 +107,9 @@ router.put('/:id', adminOnly, async (req, res) => {
       .input('fullName', sql.NVarChar, b.fullName)
       .input('active', sql.Bit, b.isActive ? 1 : 0)
       .input('role', sql.NVarChar, b.role)
-      .input('patientId', sql.Int, b.linkedPatientId);
-    let query = 'UPDATE AppUser SET Username=@u, FullName=@fullName, IsActive=@active, Role=@role, LinkedPatientId=@patientId';
+      .input('patientId', sql.Int, b.linkedPatientId)
+      .input('super', sql.Bit, b.isSuperAdmin ? 1 : 0);
+    let query = 'UPDATE AppUser SET Username=@u, FullName=@fullName, IsActive=@active, Role=@role, LinkedPatientId=@patientId, IsSuperAdmin=@super';
     if (b.password && String(b.password).trim()) {
       request.input('p', sql.NVarChar, hashPassword(b.password));
       query += ', PasswordHash=@p';
@@ -112,6 +128,8 @@ router.delete('/:id', adminOnly, async (req, res) => {
   try {
     if (Number(req.params.id) === Number(req.user.userId)) return res.status(400).json({ error: 'You cannot delete your own login' });
     const pool = await getPool();
+    const target = await pool.request().input('id', sql.Int, req.params.id).query('SELECT IsSuperAdmin FROM AppUser WHERE UserId = @id');
+    if (target.recordset[0]?.IsSuperAdmin && !req.user.isSuperAdmin) return res.status(403).json({ error: 'Only a Super Admin can switch off a Super Admin login' });
     await pool.request().input('id', sql.Int, req.params.id).query('UPDATE AppUser SET IsActive = 0 WHERE UserId = @id');
     res.json({ success: true });
   } catch (err) {
