@@ -1,0 +1,22 @@
+{
+  "name": "ayush-allinone-backend",
+  "version": "1.0.0",
+  "description": "Ayush ALL IN ONE API (Clinic + Pharmacy + Lab) - Express + SQL Server",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "init-db": "node src/db/initDb.js",
+    "smoke": "node scripts/smokeTest.js && node scripts/labChecks.js && node scripts/pharmacyChecks.js && node scripts/clinicChecks.js && node scripts/linkChecks.js"
+  },
+  "dependencies": {
+    "cloudinary": "^2.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
+    "mssql": "^11.0.1",
+    "multer": "^2.5.0"
+  }
+}
