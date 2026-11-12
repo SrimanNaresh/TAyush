@@ -8,6 +8,7 @@ import { useAppName } from './hooks/useAppName.js';
 import Login from './pages/Login.jsx';
 import ChangePassword from './components/ChangePassword.jsx';
 import PlanBanner from './components/PlanBanner.jsx';
+import { InstallMenuItem } from './components/InstallApp.jsx';
 
 const DashboardRedirect = lazy(() => import('./pages/DashboardRedirect.jsx'));
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
@@ -71,6 +72,7 @@ function UserMenu() {
           >
             <KeyRound size={15} /> Change Password
           </button>
+          <InstallMenuItem appName={document.title} onDone={() => setOpen(false)} />
           <button
             onClick={logout}
             className="flex w-full items-center gap-2 px-3.5 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"

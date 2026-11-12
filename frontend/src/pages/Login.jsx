@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LogIn, User, Lock, Eye, EyeOff, AlertCircle, Stethoscope, Pill, TestTube } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { InstallLink } from '../components/InstallApp.jsx';
 
 // Sign-in: a branded gradient backdrop; on wide screens the app's name and
 // what the app does sit on the left, the sign-in card on the right.
@@ -46,6 +47,7 @@ export default function Login({ appName }) {
           </span>
           <h1 className="mt-5 font-display text-4xl font-bold leading-tight">{appName}</h1>
           <p className="mt-2 max-w-sm text-sm text-white/70">Clinic, pharmacy and laboratory in one place.</p>
+          <InstallLink appName={appName} className="mt-4" />
           <ul className="mt-7 space-y-3.5">
             {features.map(([Icon, title, text]) => (
               <li key={title} className="flex items-center gap-3">
@@ -96,6 +98,8 @@ export default function Login({ appName }) {
               {signingIn ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+          {/* phones / tablets: the left panel is hidden, so offer it here */}
+          <div className="mt-4 flex justify-center lg:hidden"><InstallLink appName={appName} light /></div>
           <p className="mt-6 text-center text-11 text-ink-300">© {new Date().getFullYear()} {appName}</p>
         </div>
       </div>
