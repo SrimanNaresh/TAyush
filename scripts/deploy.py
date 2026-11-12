@@ -118,7 +118,9 @@ def deploy(c):
     run(c, f'curl -sf http://127.0.0.1:{PORT}/api/health')
     print('\n--- server status ---')
     status(c)
-    print(f'\nDeployed. API on port {PORT}. tayush still serves the old suite until "cutover".')
+    code, _ = run(c, f'test -L /etc/nginx/sites-enabled/{NEW_SITE}', check=False, quiet=True)
+    where = f'https://{DOMAIN} is live with this version.' if code == 0 else f'{DOMAIN} still serves the old suite until "cutover".'
+    print(f'\nDeployed. API on port {PORT}. {where}')
 
 
 def cutover(c):
