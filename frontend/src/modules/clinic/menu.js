@@ -32,29 +32,8 @@ export const BILLING_MENU = [
   { key: 'clinic.billing.custom', label: 'Custom', to: '/clinic/billing/custom' },
 ];
 
+// Order (user, 2026-11-12): Patient Queue, Consultation, Pharmacy, Lab, Reports.
 export const CLINIC_MENU = [
-  {
-    label: 'Consultation',
-    submenu: [
-      { key: 'clinic.confirm.prescription', label: 'Examine', to: '/clinic/confirm/prescription' },
-      { key: 'clinic.confirm.prescription-print', label: 'Prescription Preview', to: '/clinic/confirm/prescription-print' },
-      { key: 'clinic.reports.medical-history', label: 'Patient Medical History', to: '/clinic/reports/medical-history' },
-      {
-        // Medicines received in Pharmacy > Stock In (read-only here)
-        label: 'Pharmacy',
-        submenu: [
-          { key: 'clinic.master.medication-list', label: 'Medication List', to: '/clinic/master/medication-list' },
-        ],
-      },
-      {
-        // Tests from Lab > Masters > Test Master (read-only here)
-        label: 'Lab',
-        submenu: [
-          { key: 'clinic.master.test-master', label: 'Test List', to: '/clinic/master/test-master' },
-        ],
-      },
-    ],
-  },
   {
     label: 'Patient Queue',
     submenu: [
@@ -62,6 +41,29 @@ export const CLINIC_MENU = [
       { key: 'clinic.confirm.list', label: 'Confirm List', to: '/clinic/confirm/list' },
       { key: 'clinic.confirm.vital-sign', label: 'Vital Sign', to: '/clinic/confirm/vital-sign' },
       { key: 'clinic.confirm.vital-sign-list', label: 'Vital Sign List', to: '/clinic/confirm/vital-sign-list' },
+    ],
+  },
+  {
+    label: 'Consultation',
+    submenu: [
+      { key: 'clinic.confirm.prescription', label: 'Examine', to: '/clinic/confirm/prescription' },
+      { key: 'clinic.confirm.prescription-print', label: 'Prescription Preview', to: '/clinic/confirm/prescription-print' },
+      { key: 'clinic.reports.medical-history', label: 'Patient Medical History', to: '/clinic/reports/medical-history' },
+    ],
+  },
+  // Pharmacy and Lab are sections of their own, the same kind as Consultation.
+  {
+    // Medicines received in Pharmacy > Stock In (read-only here)
+    label: 'Pharmacy',
+    submenu: [
+      { key: 'clinic.master.medication-list', label: 'Medication List', to: '/clinic/master/medication-list' },
+    ],
+  },
+  {
+    // Tests from Lab > Masters > Test Master (read-only here)
+    label: 'Lab',
+    submenu: [
+      { key: 'clinic.master.test-master', label: 'Test List', to: '/clinic/master/test-master' },
     ],
   },
   {
