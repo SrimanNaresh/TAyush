@@ -35,3 +35,10 @@ Masters entered on tayush:
 Transactions: only 1 test patient/visit, no sales.
 
 The new database starts empty unless these masters are copied over (see the open decision).
+
+## Result (2026-11-12)
+- `deploy` OK, then `golive` OK: https://tayush.thangaminfotech.com serves Ayush All In One (health 200, app-info "Ayush All In One").
+- The API listens on 127.0.0.1:5160 only; port 5160 is closed from the internet.
+- Old suite: nginx site `thangamsuite-tayush.conf` disabled and backed up in `/root/backups/ayushallinone-cutover/20261112-183334`; PM2 `thangamsuite` stopped (not deleted). Rollback: `python scripts/deploy.py rollback`.
+- PORT_REGISTRY.md updated.
+- Still to do by the owner: change the Admin password after the first sign-in, and add the CLOUDINARY_* keys to `/opt/projects/ayushallinone/backend/.env`, then run `pm2 restart ayushallinone`.
