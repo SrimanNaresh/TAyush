@@ -15,6 +15,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 export const GROUP_ICONS = {
   Dashboard: LayoutDashboard,
   Registration: UserPlus,
+  Billing: Receipt,
   Settings: Settings,
   Reports: FileText,
   Pharmacy: Package,
@@ -33,6 +34,7 @@ export const GROUP_ICONS = {
 // falls back to Pill when a label isn't listed here.
 const SUBMENU_ICONS = {
   Medication: Pill,
+  Pharmacy: Package,
   Lab: TestTube,
   Consultation: Stethoscope,
   'Patient Queue': UserCheck,
@@ -202,17 +204,43 @@ function fitToScreen(rect, width) {
 
 const pageCount = (nodes) => nodes.reduce((n, c) => n + (c.submenu ? pageCount(c.submenu) : 1), 0);
 
-// A column's pages; a nested submenu (Consultation > Medication) shows as a
-// small sub-heading with a rule; its pages line up with the card's others.
+// A nested submenu (Consultation > Pharmacy, Consultation > Lab) is a child
+// menu: a row with its own icon and a chevron that opens / closes its pages,
+// indented under it. Open to start with when it holds the current page or a
+// search is typed.
+function ChildMenu({ node, onNavigate, query }) {
+  const { pathname } = useLocation();
+  const holdsActive = nodeIsActive(node, pathname);
+  const [open, setOpen] = useState(holdsActive);
+  const shown = open || !!query || holdsActive;
+  const Icon = SUBMENU_ICONS[node.label] || Pill;
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={shown}
+        className={`group flex w-full items-center gap-1.5 rounded-md px-1.5 py-[3px] text-left text-13 leading-[18px] transition-colors ${
+          holdsActive ? 'font-semibold text-brand-700' : 'text-ink-700 hover:bg-ink-50 hover:text-brand-700'
+        }`}
+      >
+        <Icon size={13} className={holdsActive ? 'text-brand-600' : 'text-ink-400 group-hover:text-brand-500'} />
+        <span className="flex-1"><Highlight text={node.label} query={query} /></span>
+        <ChevronDown size={13} className={`shrink-0 text-ink-300 transition-transform ${shown ? '' : '-rotate-90'}`} />
+      </button>
+      {shown && (
+        <div className="ml-3 border-l border-ink-100 pl-1.5">
+          <ColumnLinks nodes={node.submenu} onNavigate={onNavigate} query={query} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// A column's pages; a nested submenu shows as a ChildMenu (above).
 function ColumnLinks({ nodes, onNavigate, query }) {
   return nodes.map((child) => (child.submenu ? (
-    <div key={child.label} className="mt-1.5">
-      <div className="mb-0.5 flex items-center gap-1.5 px-1.5">
-        <span className="text-10 font-semibold uppercase tracking-wider text-ink-400"><Highlight text={child.label} query={query} /></span>
-        <span className="h-px flex-1 bg-ink-100" />
-      </div>
-      <ColumnLinks nodes={child.submenu} onNavigate={onNavigate} query={query} />
-    </div>
+    <ChildMenu key={child.label} node={child} onNavigate={onNavigate} query={query} />
   ) : (
     <NavLink
       key={child.to || child.label}

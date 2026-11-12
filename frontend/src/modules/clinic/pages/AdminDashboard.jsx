@@ -6,7 +6,8 @@ import {
   IndianRupee, CalendarDays, FileText, UserCog, Building2,
 } from 'lucide-react';
 import { CardHeader, Spinner, EmptyState } from '../../../components/ui.jsx';
-import { patientApi, employeeApi, medicationApi, userApi, confirmApi, prescriptionApi, billingApi } from '../api.js';
+import { patientApi, employeeApi, userApi, confirmApi, prescriptionApi, billingApi } from '../api.js';
+import { linkApi } from '../../../api/client.js';
 
 const today = () => new Date().toISOString().slice(0, 10);
 const firstOfMonth = () => {
@@ -28,7 +29,7 @@ const quickLinks = [
   { label: 'User Master', desc: 'Manage login accounts', to: '/settings/user', icon: UserCog, color: 'from-slate-500 to-slate-700' },
   { label: 'Menu Access', desc: 'Grant screen permissions', to: '/settings/menu-access', icon: ShieldCheck, color: 'from-amber-500 to-amber-700' },
   { label: 'Clinic Master', desc: 'Branding and contact details', to: '/clinic/master/clinic-details', icon: Building2, color: 'from-teal-500 to-teal-700' },
-  { label: 'Medication', desc: 'Manage the medicine catalog', to: '/clinic/master/medication', icon: Pill, color: 'from-brand-500 to-brand-700' },
+  { label: 'Medication List', desc: 'Medicines from Pharmacy Stock In', to: '/clinic/master/medication-list', icon: Pill, color: 'from-brand-500 to-brand-700' },
   { label: 'Employee List', desc: 'Manage clinic staff', to: '/clinic/registration/employee-list', icon: UserPlus, color: 'from-emerald-500 to-emerald-700' },
   { label: 'Billing Month Wise', desc: 'Revenue reports', to: '/clinic/billing/month-wise', icon: IndianRupee, color: 'from-rose-500 to-rose-700' },
 ];
@@ -53,7 +54,7 @@ export default function AdminDashboard() {
     Promise.all([
       patientApi.list().catch(() => []),
       employeeApi.list().catch(() => []),
-      medicationApi.list().catch(() => []),
+      linkApi.medicines().catch(() => []),
       userApi.list().catch(() => []),
       confirmApi.list(today()).catch(() => []),
       prescriptionApi.list().catch(() => []),

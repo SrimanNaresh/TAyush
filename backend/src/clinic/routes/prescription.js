@@ -163,7 +163,7 @@ router.put('/:id', async (req, res) => {
         .input('testId', sql.Int, testId)
         .query(`
           INSERT INTO PrescriptionLabTest (PrescriptionId, TestId, TestName)
-          SELECT @prescriptionId, TestId, TestName FROM LabTest WHERE TestId = @testId
+          SELECT @prescriptionId, test_id, test_name FROM test_master WHERE test_id = @testId -- Lab Test Master
         `);
     }
     await tx.commit();
@@ -232,7 +232,7 @@ router.post('/', async (req, res) => {
         .input('testId', sql.Int, testId)
         .query(`
           INSERT INTO PrescriptionLabTest (PrescriptionId, TestId, TestName)
-          SELECT @prescriptionId, TestId, TestName FROM LabTest WHERE TestId = @testId
+          SELECT @prescriptionId, test_id, test_name FROM test_master WHERE test_id = @testId -- Lab Test Master
         `);
     }
     await tx.commit();

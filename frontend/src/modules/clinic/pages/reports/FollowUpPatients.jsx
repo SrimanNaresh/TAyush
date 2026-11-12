@@ -82,7 +82,7 @@ export default function FollowUpPatients() {
         <CardHeader
           icon={CalendarClock}
           title="Follow Up Patients"
-          subtitle="Patients with a next visit date scheduled from Doctor's"
+          subtitle="Patients with a next visit date scheduled from Examine"
           actions={
             <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
               <div className="relative flex-1 sm:w-64 sm:flex-none">

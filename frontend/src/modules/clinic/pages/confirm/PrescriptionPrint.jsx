@@ -6,7 +6,8 @@ import { PrescriptionHeader, PrescriptionFooter, PrescriptionPageSize } from '..
 import PrescriptionPrintable from '../../components/PrescriptionPrintable.jsx';
 import SearchSelect from '../../../../components/SearchSelect.jsx';
 import { useToast } from '../../../../hooks/useToast.js';
-import { clinicApi, prescriptionApi, patientApi, medicationApi } from '../../api.js';
+import { clinicApi, prescriptionApi, patientApi } from '../../api.js';
+import { linkApi } from '../../../../api/client.js';
 
 const fmt = (date) => (date ? new Date(date).toLocaleString() : '-');
 const normalizeClinic = (data) => data ? {
@@ -65,7 +66,7 @@ export default function PrescriptionPrint() {
       setPageWidth(c?.pageWidth || '');
     }).catch(() => setClinic(null));
   }, []);
-  useEffect(() => { medicationApi.list().then(setMeds).catch(() => setMeds([])); }, []);
+  useEffect(() => { linkApi.medicines().then(setMeds) /* Pharmacy Stock In items */.catch(() => setMeds([])); }, []);
 
   const loadHistory = () => {
     if (!selected) return;
@@ -324,7 +325,7 @@ export default function PrescriptionPrint() {
             />
           </div>
         )
-      ) : effectiveSelected ? <div className="card mt-5"><p className="text-sm text-slate-400">No prescription found for this patient.</p></div> : <div className="no-print card mt-5"><p className="text-sm text-slate-400">Open Prescription Preview from a selected patient in Doctor's, or click "Preview Letterhead" above to check the letterhead design.</p></div>}
+      ) : effectiveSelected ? <div className="card mt-5"><p className="text-sm text-slate-400">No prescription found for this patient.</p></div> : <div className="no-print card mt-5"><p className="text-sm text-slate-400">Open Prescription Preview from a selected patient in Examine, or click "Preview Letterhead" above to check the letterhead design.</p></div>}
 
       <Toast toast={toast} />
     </div>

@@ -7,7 +7,8 @@ import DocumentPreviewModal from '../../components/DocumentPreviewModal.jsx';
 import PatientPicker from '../../components/PatientPicker.jsx';
 import SearchSelect from '../../../../components/SearchSelect.jsx';
 import { useToast } from '../../../../hooks/useToast.js';
-import { prescriptionApi, medicationApi, confirmApi, clinicApi, patientApi, patientDocumentApi, labTestApi } from '../../api.js';
+import { prescriptionApi, confirmApi, clinicApi, patientApi, patientDocumentApi } from '../../api.js';
+import { linkApi } from '../../../../api/client.js';
 
 // Timing options with short labels (shown) + full names (tooltip / stored).
 const TIMINGS = [
@@ -61,8 +62,8 @@ export default function Prescription() {
   const [doneSearch, setDoneSearch] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
-  useEffect(() => { medicationApi.list().then(setMeds).catch(() => setMeds([])); }, []);
-  useEffect(() => { labTestApi.list().then((rows) => setLabTests(rows.filter((r) => r.IsActive))).catch(() => setLabTests([])); }, []);
+  useEffect(() => { linkApi.medicines().then(setMeds) /* Pharmacy Stock In items */.catch(() => setMeds([])); }, []);
+  useEffect(() => { linkApi.labTests().then((rows) => setLabTests(rows.filter((r) => r.IsActive))) /* Lab Test Master */.catch(() => setLabTests([])); }, []);
   useEffect(() => {
     clinicApi.get()
       .then((c) => {
@@ -326,7 +327,7 @@ export default function Prescription() {
 
   return (
     <div>
-      <PageHeader title="Doctor's" />
+      <PageHeader title="Examine" />
 
       <div className="space-y-5">
         {!selected ? (

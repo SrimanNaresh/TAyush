@@ -10,7 +10,7 @@
 // Module pages are added here in their phases:
 import { LAB_MENU } from '../modules/lab/menu.js';
 import { PHARMACY_MENU } from '../modules/pharmacy/menu.js';
-import { CLINIC_MENU } from '../modules/clinic/menu.js';
+import { CLINIC_MENU, CLINIC_DASHBOARDS, REGISTRATION_MENU, CLINIC_SETTINGS, BILLING_MENU } from '../modules/clinic/menu.js';
 
 export const MENU_GROUPS = [
   // A group whose only page has the group's own name shows as a plain link.
@@ -18,9 +18,12 @@ export const MENU_GROUPS = [
     group: 'Dashboard',
     items: [
       { key: 'dashboard', label: 'Dashboard', to: '/dashboard' },
+      ...CLINIC_DASHBOARDS,
     ],
   },
+  { group: 'Registration', items: REGISTRATION_MENU },
   { group: 'Clinic', items: CLINIC_MENU },
+  { group: 'Billing', items: BILLING_MENU },
   { group: 'Pharmacy', items: PHARMACY_MENU },
   { group: 'Lab', items: LAB_MENU },
   {
@@ -29,6 +32,7 @@ export const MENU_GROUPS = [
       { key: 'settings.organisation', label: 'Organisation Details', to: '/settings/organisation' },
       { key: 'settings.user', label: 'User Master', to: '/settings/user' },
       { key: 'settings.menu-access', label: 'Menu Access', to: '/settings/menu-access' },
+      ...CLINIC_SETTINGS,
     ],
   },
 ].filter((g) => g.items.length > 0);

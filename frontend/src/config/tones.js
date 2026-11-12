@@ -4,7 +4,7 @@ import { MENU_GROUPS } from './menuItems.js';
 // header, so a section looks the same wherever it appears. Full class names
 // (not built from parts) so Tailwind keeps them.
 export const MENU_TONE_OF = {
-  Dashboard: 'brand', Clinic: 'sky', Pharmacy: 'emerald', Lab: 'violet', Settings: 'slate',
+  Dashboard: 'brand', Registration: 'teal', Clinic: 'sky', Billing: 'rose', Pharmacy: 'emerald', Lab: 'violet', Settings: 'slate',
   // Pharmacy sub-menus keep their own colours on their screens
   Item: 'violet', Vendor: 'amber', 'Purchase / Order': 'sky', 'Stock In': 'emerald',
   Return: 'rose', Sales: 'teal', Report: 'indigo',

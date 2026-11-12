@@ -66,6 +66,10 @@ export const clinicApi = organisationApi;
 // to Pharmacy items and its lab tests matched to Lab tests.
 export const linkApi = {
   prescription: (id) => api.get(`/links/prescription/${id}`).then((r) => r.data),
+  // Medicines received in Pharmacy Stock In (Clinic's medicine list); params: { search, inStock: '1' }
+  medicines: (params) => api.get('/links/medicines', { params }).then((r) => r.data),
+  // Lab > Test Master as Clinic's lab test list; params: { search }
+  labTests: (params) => api.get('/links/lab-tests', { params }).then((r) => r.data),
 };
 
 export default api;

@@ -7,7 +7,6 @@ import { Route } from 'react-router-dom';
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'));
 const ReceptionDashboard = lazy(() => import('./pages/ReceptionDashboard.jsx'));
 const DoctorDashboard = lazy(() => import('./pages/DoctorDashboard.jsx'));
-const Medication = lazy(() => import('./pages/master/Medication.jsx'));
 const MedicationList = lazy(() => import('./pages/master/MedicationList.jsx'));
 const TestMaster = lazy(() => import('./pages/master/TestMaster.jsx'));
 const ClinicDetails = lazy(() => import('./pages/master/ClinicDetails.jsx'));
@@ -36,7 +35,6 @@ const PAGES = [
   ['/clinic/dashboard/admin', AdminDashboard],
   ['/clinic/dashboard/reception', ReceptionDashboard],
   ['/clinic/dashboard/doctor', DoctorDashboard],
-  ['/clinic/master/medication', Medication],
   ['/clinic/master/medication-list', MedicationList],
   ['/clinic/master/test-master', TestMaster],
   ['/clinic/master/clinic-details', ClinicDetails],

@@ -3,6 +3,8 @@
 // own API and rules.
 import { Router } from 'express';
 import { getPool, sql } from '../db/pool.js';
+import { CURRENT_STOCK } from '../pharmacy/utils/stockEvents.js';
+import { batchStock } from '../pharmacy/utils/batchStock.js';
 
 const router = Router();
 const norm = (s) => String(s || '').trim().replace(/\s+/g, ' ').toLowerCase();
@@ -34,6 +36,7 @@ router.get('/prescription/:id', async (req, res) => {
 
     const itemByName = new Map(pharmacyItems.recordset.map((i) => [norm(i.Name), i]));
     const testByName = new Map(labTests.recordset.map((t) => [norm(t.test_name), t]));
+    const testById = new Map(labTests.recordset.map((t) => [t.test_id, t]));
 
     res.json({
       prescription: { PrescriptionId: rx.PrescriptionId, CreatedAt: rx.CreatedAt, Diagnosis: rx.Diagnosis },
@@ -44,10 +47,74 @@ router.get('/prescription/:id', async (req, res) => {
         return { name, dosage: m.Dosage, frequency: m.Frequency, duration: m.Duration, pharmacyItem: hit ? { ItemId: hit.ItemId, Name: hit.Name } : null };
       }),
       labTests: tests.recordset.map((t) => {
-        const hit = testByName.get(norm(t.TestName));
+        // Prescriptions now store the Lab test_id; older ones are matched by name.
+        const hit = testById.get(t.TestId) || testByName.get(norm(t.TestName));
         return { name: t.TestName, labTest: hit ? { test_id: hit.test_id, test_code: hit.test_code, test_name: hit.test_name } : null };
       }),
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Clinic's lab test list = Lab > Masters > Test Master (user decision
+// 2026-11-12: the clinic's own LabTest table is no longer used). Shaped like
+// the old clinic rows (TestId, TestName, IsActive) so clinic screens keep working.
+router.get('/lab-tests', async (req, res) => {
+  try {
+    const search = String(req.query.search || '').trim();
+    const pool = await getPool();
+    const r = await pool.request().input('s', sql.NVarChar, `%${search}%`).query(`
+      SELECT t.test_id AS TestId, t.test_code AS TestCode, t.test_name AS TestName, CAST(1 AS BIT) AS IsActive,
+             (SELECT COUNT(*) FROM test_components c WHERE c.test_id = t.test_id) AS ComponentCount,
+             f.fee_amount AS Fee, f.discount_amount AS Discount, f.net_amount AS NetAmount
+      FROM test_master t LEFT JOIN test_fees f ON f.test_id = t.test_id
+      WHERE @s = '%%' OR t.test_code LIKE @s OR t.test_name LIKE @s
+      ORDER BY t.test_name`);
+    res.json(r.recordset);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Clinic's medicine list = Pharmacy items received through Stock In (user
+// decision 2026-11-12: the clinic Medication master is no longer used).
+// One row per item: names, current stock (the Stock Report's sum), latest
+// Stock In MRP and the nearest expiry among batches that still have stock.
+// ?search= filters by name / generic; ?inStock=1 keeps only items with stock.
+router.get('/medicines', async (req, res) => {
+  try {
+    const search = String(req.query.search || '').trim();
+    const pool = await getPool();
+    const r = await pool.request()
+      .input('s', sql.NVarChar, `%${search}%`)
+      .input('itemId', sql.Int, null)
+      .query(`
+        SELECT i.ItemId, i.Name AS MedicineName, g.Name AS GenericName, m.Name AS Manufacturer,
+               i.Category, i.Potency, i.Pack, u.Name AS Unit,
+               ISNULL(st.CurrentStock, 0) AS Stock,
+               last.MRP, last.InDate AS LastStockIn
+        FROM PharmacyItem i
+        CROSS APPLY (
+          SELECT TOP 1 l.MRP, h.InDate
+          FROM StockInItem l JOIN StockIn h ON h.StockInId = l.StockInId AND h.IsActive = 1
+          WHERE l.ItemId = i.ItemId ORDER BY h.InDate DESC, l.LineId DESC
+        ) last
+        LEFT JOIN GenericNameMaster g ON g.GenericNameId = i.GenericNameId
+        LEFT JOIN ManufacturerMaster m ON m.ManufacturerId = i.ManufacturerId
+        LEFT JOIN UnitMaster u ON u.UnitId = i.UnitId
+        LEFT JOIN (${CURRENT_STOCK}) st ON st.ItemId = i.ItemId
+        WHERE i.IsActive = 1
+          AND (@s = '%%' OR i.Name LIKE @s OR g.Name LIKE @s)
+        ORDER BY i.Name`);
+    let rows = r.recordset;
+    if (req.query.inStock === '1') rows = rows.filter((x) => Number(x.Stock) > 0);
+    const batches = await batchStock(pool.request(), rows.map((x) => x.ItemId));
+    const nearest = new Map();
+    for (const b of batches) {
+      if (Number(b.AvailableQty) > 0 && b.ExpiryDate && !nearest.has(b.ItemId)) nearest.set(b.ItemId, b.ExpiryDate);
+    }
+    res.json(rows.map((x) => ({ ...x, NearestExpiry: nearest.get(x.ItemId) || null })));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

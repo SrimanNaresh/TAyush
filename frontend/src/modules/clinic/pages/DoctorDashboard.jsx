@@ -19,7 +19,7 @@ const statusColor = {
 };
 
 const quickLinks = [
-  { label: "Doctor's Medications", desc: 'Write today\'s prescription', to: '/clinic/confirm/prescription', icon: Stethoscope, color: 'from-purple-500 to-indigo-600' },
+  { label: 'Examine', desc: 'Write today\'s prescription', to: '/clinic/confirm/prescription', icon: Stethoscope, color: 'from-purple-500 to-indigo-600' },
   { label: 'Prescription Preview', desc: 'Preview and print', to: '/clinic/confirm/prescription-print', icon: Printer, color: 'from-indigo-400 to-indigo-600' },
   { label: 'Confirm List', desc: "Today's token queue", to: '/clinic/confirm/list', icon: ListChecks, color: 'from-amber-400 to-amber-600' },
   { label: 'Patient List', desc: 'Search all patients', to: '/clinic/reports/patient-list', icon: Users, color: 'from-slate-400 to-slate-600' },
