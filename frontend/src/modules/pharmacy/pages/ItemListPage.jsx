@@ -74,17 +74,17 @@ export default function ItemListPage() {
             {/* Item Name stays fixed on the left; the other columns scroll sideways
                 when they don't fit (always on a phone). */}
             <div className="overflow-x-auto rounded-lg">
-              <table className="list-pinned pin-first w-full min-w-[720px] text-left text-sm">
+              <table className="list-pinned pin-first w-full min-w-[720px] text-left text-13">
                 <thead>
                   <tr className="table-head">
-                    <th className="w-[150px] min-w-[150px] px-3 py-2 sm:w-auto sm:min-w-[220px]">Item Name</th>
-                    <th className="px-3 py-2">Item Code</th>
-                    <th className="px-3 py-2">Category</th>
-                    <th className="px-3 py-2">Unit</th>
-                    <th className="px-3 py-2 text-right">Price</th>
-                    <th className="px-3 py-2 text-right">Stock</th>
-                    <th className="px-3 py-2">Status</th>
-                    <th className="px-3 py-2 text-right">Edit</th>
+                    <th className="w-[150px] min-w-[150px] px-2.5 py-1.5 sm:w-auto sm:min-w-[220px]">Item Name</th>
+                    <th className="px-2.5 py-1.5">Item Code</th>
+                    <th className="px-2.5 py-1.5">Category</th>
+                    <th className="px-2.5 py-1.5">Unit</th>
+                    <th className="px-2.5 py-1.5 text-right">Price</th>
+                    <th className="px-2.5 py-1.5 text-right">Stock</th>
+                    <th className="px-2.5 py-1.5">Status</th>
+                    <th className="px-2.5 py-1.5 text-right">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -92,15 +92,15 @@ export default function ItemListPage() {
                     const low = Number(r.Stock) <= 0;
                     return (
                       <tr key={r.ItemId} className="transition-colors hover:bg-brand-50/40">
-                        <td className="max-w-[150px] break-words px-3 py-1.5 font-medium text-slate-700 sm:max-w-none">{r.Name}</td>
-                        <td className="px-3 py-1.5 text-slate-500">{r.ItemCode}</td>
-                        <td className="px-3 py-1.5 text-slate-500">{r.Category || '-'}</td>
-                        <td className="px-3 py-1.5 text-slate-500">{r.UnitName || '-'}</td>
-                        <td className="px-3 py-1.5 text-right text-slate-600">{money(r.SellPrice ?? r.MRP)}</td>
+                        <td className="max-w-[150px] break-words px-2.5 py-1 font-medium text-slate-700 sm:max-w-none">{r.Name}</td>
+                        <td className="px-2.5 py-1 text-slate-500">{r.ItemCode}</td>
+                        <td className="px-2.5 py-1 text-slate-500">{r.Category || '-'}</td>
+                        <td className="px-2.5 py-1 text-slate-500">{r.UnitName || '-'}</td>
+                        <td className="px-2.5 py-1 text-right text-slate-600">{money(r.SellPrice ?? r.MRP)}</td>
                         <td className={`px-3 py-1.5 text-right font-semibold ${low ? 'text-red-600' : 'text-slate-700'}`}>{Number(r.Stock)}</td>
-                        <td className="px-3 py-1.5"><span className={r.Status === 'Inactive' ? 'text-slate-400' : 'text-emerald-600'}>{r.Status}</span></td>
-                        <td className="px-3 py-1.5 text-right">
-                          <button type="button" className="btn-ghost px-2 py-1" title="Edit item" onClick={() => navigate('/pharmacy/item', { state: { editItemId: r.ItemId } })}><Pencil size={15} /></button>
+                        <td className="px-2.5 py-1"><span className={r.Status === 'Inactive' ? 'text-slate-400' : 'text-emerald-600'}>{r.Status}</span></td>
+                        <td className="px-2.5 py-1 text-right">
+                          <button type="button" className="btn-ghost !p-1" title="Edit item" onClick={() => navigate('/pharmacy/item', { state: { editItemId: r.ItemId } })}><Pencil size={15} /></button>
                         </td>
                       </tr>
                     );

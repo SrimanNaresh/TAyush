@@ -113,26 +113,26 @@ export default function FollowUpPatients() {
           <EmptyState message="No follow-up patients found." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">Patient Name</th>
-                  <th className="px-3 py-3">Mobile No</th>
-                  <th className="px-3 py-3">Last Visit Date</th>
-                  <th className="px-3 py-3">Next Visit Date</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Action</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">Patient Name</th>
+                  <th className="px-2.5 py-1.5">Mobile No</th>
+                  <th className="px-2.5 py-1.5">Last Visit Date</th>
+                  <th className="px-2.5 py-1.5">Next Visit Date</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.PatientId} className="table-row">
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <p className="font-medium text-slate-700">{r.Name}</p>
                       <p className="text-xs text-slate-400">ID #{r.PatientId}</p>
                     </td>
-                    <td className="px-3 py-3 text-slate-500">{r.MobileNo || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{fmtDate(r.LastVisitDate)}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1 text-slate-500">{r.MobileNo || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{fmtDate(r.LastVisitDate)}</td>
+                    <td className="px-2.5 py-1">
                       {editingId === r.PrescriptionId ? (
                         <div className="flex items-center gap-1">
                           <input
@@ -142,7 +142,7 @@ export default function FollowUpPatients() {
                             onChange={(e) => setEditDate(e.target.value)}
                           />
                           <button
-                            className="btn-ghost px-2 py-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-30"
+                            className="btn-ghost !p-1.5 text-emerald-600 hover:bg-emerald-50 disabled:opacity-30"
                             title="Save"
                             onClick={() => saveNextVisitDate(r)}
                             disabled={savingId === r.PrescriptionId}
@@ -150,7 +150,7 @@ export default function FollowUpPatients() {
                             <Check size={15} />
                           </button>
                           <button
-                            className="btn-ghost px-2 py-1.5 text-red-500 hover:bg-red-50"
+                            className="btn-ghost !p-1.5 text-red-500 hover:bg-red-50"
                             title="Cancel"
                             onClick={() => setEditingId(null)}
                             disabled={savingId === r.PrescriptionId}
@@ -167,7 +167,7 @@ export default function FollowUpPatients() {
                         </div>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-right">
+                    <td className="px-2.5 py-1 text-right">
                       <button className="btn-secondary py-1.5" onClick={() => sendReminder(r)} title="Send a WhatsApp reminder">
                         <MessageCircle size={15} /> Send
                       </button>

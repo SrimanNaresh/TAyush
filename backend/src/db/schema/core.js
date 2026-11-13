@@ -26,6 +26,10 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Patient_Name')
     CREATE INDEX IX_Patient_Name ON dbo.Patient(Name);
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_Patient_Mobile')
     CREATE INDEX IX_Patient_Mobile ON dbo.Patient(MobileNo);
+-- Clinic registration: who referred the patient ('Doctor' or 'Patient').
+-- For 'Doctor', the clinic/hospital name is kept in ReferredBy.
+IF COL_LENGTH('dbo.Patient','ReferralType') IS NULL
+    ALTER TABLE dbo.Patient ADD ReferralType NVARCHAR(20) NULL;
 
 IF OBJECT_ID('dbo.AppUser','U') IS NULL
 CREATE TABLE dbo.AppUser (

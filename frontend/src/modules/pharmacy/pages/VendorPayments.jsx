@@ -161,7 +161,7 @@ export default function VendorPayments() {
           <EmptyState message="No Stock Ins or Returns in this period." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-left text-sm">
+            <table className="w-full min-w-[860px] text-left text-13">
               <thead>
                 <tr className="table-head">
                   <th className={`${th} rounded-l-lg`}>Vendor</th>
@@ -195,7 +195,7 @@ export default function VendorPayments() {
                       </tr>
                       {open && (
                         <tr className="bg-ink-50/60">
-                          <td colSpan={8} className="px-4 py-2"><VendorDocs vendorId={r.VendorId} from={from} to={to} isAdmin={isAdmin} show={show} onDeleted={load} /></td>
+                          <td colSpan={8} className="px-2.5 py-1"><VendorDocs vendorId={r.VendorId} from={from} to={to} isAdmin={isAdmin} show={show} onDeleted={load} /></td>
                         </tr>
                       )}
                     </Fragment>

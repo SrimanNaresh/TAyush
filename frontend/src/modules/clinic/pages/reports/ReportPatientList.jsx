@@ -76,32 +76,32 @@ export default function ReportPatientList() {
           <EmptyState message="No patients." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">#</th>
-                  <th className="px-3 py-3">Name</th>
-                  <th className="px-3 py-3">Mobile</th>
-                  <th className="px-3 py-3">Address</th>
-                  <th className="px-3 py-3 text-center">Vitals</th>
-                  <th className="px-3 py-3 text-center">Prescriptions</th>
-                  <th className="rounded-r-lg px-3 py-3">Registered</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">#</th>
+                  <th className="px-2.5 py-1.5">Name</th>
+                  <th className="px-2.5 py-1.5">Mobile</th>
+                  <th className="px-2.5 py-1.5">Address</th>
+                  <th className="px-2.5 py-1.5 text-center">Vitals</th>
+                  <th className="px-2.5 py-1.5 text-center">Prescriptions</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5">Registered</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={r.PatientId} className="table-row">
-                    <td className="px-3 py-3 text-slate-400">{i + 1}</td>
-                    <td className="px-3 py-3 font-medium text-slate-700">{r.Name}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.MobileNo || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.Address || '-'}</td>
-                    <td className="px-3 py-3 text-center">
+                    <td className="px-2.5 py-1 text-slate-400">{i + 1}</td>
+                    <td className="px-2.5 py-1 font-medium text-slate-700">{r.Name}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.MobileNo || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.Address || '-'}</td>
+                    <td className="px-2.5 py-1 text-center">
                       <span className="badge bg-rose-100 text-rose-700">{r.VitalCount}</span>
                     </td>
-                    <td className="px-3 py-3 text-center">
+                    <td className="px-2.5 py-1 text-center">
                       <span className="badge bg-brand-100 text-brand-700">{r.PrescriptionCount}</span>
                     </td>
-                    <td className="px-3 py-3 text-xs text-slate-400">{fmt(r.CreatedAt)}</td>
+                    <td className="px-2.5 py-1 text-xs text-slate-400">{fmt(r.CreatedAt)}</td>
                   </tr>
                 ))}
               </tbody>

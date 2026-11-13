@@ -25,6 +25,8 @@ export default function Patient() {
     mobileNo: editPatient?.MobileNo || prefill?.mobileNo || '',
     age: editPatient?.Age ?? '',
     address: editPatient?.Address || '',
+    referralType: editPatient?.ReferralType || '',
+    referredBy: editPatient?.ReferralType === 'Doctor' ? editPatient?.ReferredBy || '' : '',
   });
   const [nextId, setNextId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -54,7 +56,7 @@ export default function Patient() {
       } else {
         const created = await patientApi.create(form);
         show(`Patient saved (ID: ${created.PatientId})`, 'success');
-        setForm({ name: '', mobileNo: '', age: '', address: '' });
+        setForm({ name: '', mobileNo: '', age: '', address: '', referralType: '', referredBy: '' });
         loadNextId();
         // If we came from the Confirm flow, offer to confirm this new patient.
         if (fromConfirm) setConfirmPrompt(created);
@@ -150,6 +152,24 @@ export default function Patient() {
             <label className="label">Address</label>
             <input className="input" value={form.address} onChange={update('address')} placeholder="Address" />
           </div>
+          <div>
+            <label className="label">Referral</label>
+            <select
+              className="input"
+              value={form.referralType}
+              onChange={(e) => setForm((f) => ({ ...f, referralType: e.target.value, referredBy: e.target.value === 'Doctor' ? f.referredBy : '' }))}
+            >
+              <option value="">Select</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Patient">Patient</option>
+            </select>
+          </div>
+          {form.referralType === 'Doctor' && (
+            <div>
+              <label className="label">Clinic or Hospital Name</label>
+              <input className="input" value={form.referredBy} onChange={update('referredBy')} placeholder="Clinic or hospital name" maxLength={150} />
+            </div>
+          )}
         </div>
         <div className="mt-5 flex justify-end border-t border-ink-100 pt-4">
           <button type="submit" className="btn-primary" disabled={saving}>

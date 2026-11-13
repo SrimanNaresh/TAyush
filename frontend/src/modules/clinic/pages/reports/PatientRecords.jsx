@@ -121,37 +121,37 @@ export default function PatientRecords() {
               <EmptyState message="No documents found for this patient." />
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-13">
                   <thead>
                     <tr className="table-head">
-                      <th className="rounded-l-lg px-3 py-3">File</th>
-                      <th className="px-3 py-3">Category</th>
-                      <th className="px-3 py-3">Date</th>
-                      <th className="px-3 py-3">Uploaded By</th>
-                      <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                      <th className="rounded-l-lg px-2.5 py-1.5">File</th>
+                      <th className="px-2.5 py-1.5">Category</th>
+                      <th className="px-2.5 py-1.5">Date</th>
+                      <th className="px-2.5 py-1.5">Uploaded By</th>
+                      <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {docs.map((d) => (
                       <tr key={d.DocumentId} className="table-row">
-                        <td className="px-3 py-3">
+                        <td className="px-2.5 py-1">
                           <div className="flex items-center gap-2">
                             <FileText size={15} className="text-slate-400" />
                             <span className="font-medium text-slate-700">{d.FileName}</span>
                           </div>
                         </td>
-                        <td className="px-3 py-3 text-slate-500">{d.Category || '-'}</td>
-                        <td className="px-3 py-3 text-slate-500">{fmtDate(d.DocumentDate)}</td>
-                        <td className="px-3 py-3 text-slate-500">{d.UploadedBy || '-'}</td>
-                        <td className="px-3 py-3">
+                        <td className="px-2.5 py-1 text-slate-500">{d.Category || '-'}</td>
+                        <td className="px-2.5 py-1 text-slate-500">{fmtDate(d.DocumentDate)}</td>
+                        <td className="px-2.5 py-1 text-slate-500">{d.UploadedBy || '-'}</td>
+                        <td className="px-2.5 py-1">
                           <div className="flex justify-end gap-1">
-                            <button className="btn-ghost px-2 py-1" title="Preview" onClick={() => setPreviewDoc(d)}>
+                            <button className="btn-ghost !p-1" title="Preview" onClick={() => setPreviewDoc(d)}>
                               <Eye size={15} />
                             </button>
-                            <button className="btn-ghost px-2 py-1" title="Download" onClick={() => download(d)} disabled={downloadingId === d.DocumentId}>
+                            <button className="btn-ghost !p-1" title="Download" onClick={() => download(d)} disabled={downloadingId === d.DocumentId}>
                               <Download size={15} />
                             </button>
-                            <button className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" title="Delete" onClick={() => remove(d)}>
+                            <button className="btn-ghost !p-1 text-red-500 hover:bg-red-50" title="Delete" onClick={() => remove(d)}>
                               <Trash2 size={15} />
                             </button>
                           </div>

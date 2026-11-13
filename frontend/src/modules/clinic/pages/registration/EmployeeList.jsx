@@ -110,31 +110,31 @@ export default function EmployeeList() {
           <EmptyState message="No employees found." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">#</th>
-                  <th className="px-3 py-3">Name</th>
-                  <th className="px-3 py-3">Mobile</th>
-                  <th className="px-3 py-3">Type</th>
-                  <th className="px-3 py-3">Doctor Fee</th>
-                  <th className="px-3 py-3">Shifts</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">#</th>
+                  <th className="px-2.5 py-1.5">Name</th>
+                  <th className="px-2.5 py-1.5">Mobile</th>
+                  <th className="px-2.5 py-1.5">Type</th>
+                  <th className="px-2.5 py-1.5">Doctor Fee</th>
+                  <th className="px-2.5 py-1.5">Shifts</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={r.EmployeeId} className="table-row">
-                    <td className="px-3 py-3 text-slate-400">{i + 1}</td>
-                    <td className="px-3 py-3 font-medium text-slate-700">{r.Name}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.MobileNo || '-'}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1 text-slate-400">{i + 1}</td>
+                    <td className="px-2.5 py-1 font-medium text-slate-700">{r.Name}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.MobileNo || '-'}</td>
+                    <td className="px-2.5 py-1">
                       {r.EmpType ? <span className={`badge ${typeColors[r.EmpType] || 'bg-slate-100 text-slate-600'}`}>{r.EmpType}</span> : '-'}
                     </td>
-                    <td className="px-3 py-3 text-slate-500">
+                    <td className="px-2.5 py-1 text-slate-500">
                       {r.EmpType === 'Doctor' ? `₹${Number(r.DoctorFee || 0).toFixed(2)}` : '-'}
                     </td>
-                    <td className="px-3 py-3 text-slate-500">
+                    <td className="px-2.5 py-1 text-slate-500">
                       {r.shifts?.length ? (
                         <div className="flex flex-wrap gap-1">
                           {r.shifts.map((s, idx) => (
@@ -145,10 +145,10 @@ export default function EmployeeList() {
                         </div>
                       ) : '-'}
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end gap-1">
-                        <button className="btn-ghost px-2 py-1" onClick={() => openEdit(r)}><Pencil size={15} /></button>
-                        <button className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" onClick={() => remove(r)}><Trash2 size={15} /></button>
+                        <button className="btn-ghost !p-1" onClick={() => openEdit(r)}><Pencil size={15} /></button>
+                        <button className="btn-ghost !p-1 text-red-500 hover:bg-red-50" onClick={() => remove(r)}><Trash2 size={15} /></button>
                       </div>
                     </td>
                   </tr>

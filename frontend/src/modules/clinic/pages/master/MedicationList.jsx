@@ -61,32 +61,32 @@ export default function MedicationList() {
         <EmptyState message="No medicines yet. Medicines appear here once they are received through Pharmacy › Stock In." />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-13">
             <thead>
               <tr className="table-head">
-                <th className="rounded-l-lg px-3 py-3">#</th>
-                <th className="px-3 py-3">Medicine</th>
-                <th className="px-3 py-3">Generic</th>
-                <th className="px-3 py-3">Category</th>
-                <th className="px-3 py-3">Potency</th>
-                <th className="px-3 py-3">Pack / Unit</th>
-                <th className="px-3 py-3 text-right">Stock</th>
-                <th className="px-3 py-3 text-right">MRP</th>
-                <th className="rounded-r-lg px-3 py-3">Nearest Expiry</th>
+                <th className="rounded-l-lg px-2.5 py-1.5">#</th>
+                <th className="px-2.5 py-1.5">Medicine</th>
+                <th className="px-2.5 py-1.5">Generic</th>
+                <th className="px-2.5 py-1.5">Category</th>
+                <th className="px-2.5 py-1.5">Potency</th>
+                <th className="px-2.5 py-1.5">Pack / Unit</th>
+                <th className="px-2.5 py-1.5 text-right">Stock</th>
+                <th className="px-2.5 py-1.5 text-right">MRP</th>
+                <th className="rounded-r-lg px-2.5 py-1.5">Nearest Expiry</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r, i) => (
                 <tr key={r.ItemId} className="table-row">
-                  <td className="px-3 py-2.5 text-ink-400">{i + 1}</td>
-                  <td className="px-3 py-2.5 font-medium text-ink-800">{r.MedicineName}</td>
-                  <td className="px-3 py-2.5 text-ink-600">{r.GenericName || '—'}</td>
-                  <td className="px-3 py-2.5 text-ink-600">{r.Category || '—'}</td>
-                  <td className="px-3 py-2.5 text-ink-600">{r.Potency || '—'}</td>
-                  <td className="px-3 py-2.5 text-ink-600">{[r.Pack, r.Unit].filter(Boolean).join(' · ') || '—'}</td>
+                  <td className="px-2.5 py-1 text-ink-400">{i + 1}</td>
+                  <td className="px-2.5 py-1 font-medium text-ink-800">{r.MedicineName}</td>
+                  <td className="px-2.5 py-1 text-ink-600">{r.GenericName || '—'}</td>
+                  <td className="px-2.5 py-1 text-ink-600">{r.Category || '—'}</td>
+                  <td className="px-2.5 py-1 text-ink-600">{r.Potency || '—'}</td>
+                  <td className="px-2.5 py-1 text-ink-600">{[r.Pack, r.Unit].filter(Boolean).join(' · ') || '—'}</td>
                   <td className={`px-3 py-2.5 text-right font-semibold ${Number(r.Stock) > 0 ? 'text-emerald-700' : 'text-red-500'}`}>{qty(r.Stock)}</td>
-                  <td className="px-3 py-2.5 text-right text-ink-700">{r.MRP != null ? `₹${Number(r.MRP).toFixed(2)}` : '—'}</td>
-                  <td className="px-3 py-2.5 text-ink-600">{fmtDate(r.NearestExpiry)}</td>
+                  <td className="px-2.5 py-1 text-right text-ink-700">{r.MRP != null ? `₹${Number(r.MRP).toFixed(2)}` : '—'}</td>
+                  <td className="px-2.5 py-1 text-ink-600">{fmtDate(r.NearestExpiry)}</td>
                 </tr>
               ))}
             </tbody>

@@ -183,17 +183,17 @@ export default function BillingPatientBill() {
             <EmptyState message="No patient visits found for this date." />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-13">
                 <thead>
                   <tr className="table-head">
-                    <th className="rounded-l-lg px-3 py-3">Token</th>
-                    <th className="px-3 py-3">Patient</th>
-                    <th className="px-3 py-3">Mobile</th>
-                    <th className="px-3 py-3">Status</th>
-                    <th className="px-3 py-3 text-right">Doctor Fees</th>
-                    <th className="px-3 py-3 text-right">Medical Fee</th>
-                    <th className="px-3 py-3 text-right">Total</th>
-                    <th className="no-print rounded-r-lg px-3 py-3 text-right">Actions</th>
+                    <th className="rounded-l-lg px-2.5 py-1.5">Token</th>
+                    <th className="px-2.5 py-1.5">Patient</th>
+                    <th className="px-2.5 py-1.5">Mobile</th>
+                    <th className="px-2.5 py-1.5">Status</th>
+                    <th className="px-2.5 py-1.5 text-right">Doctor Fees</th>
+                    <th className="px-2.5 py-1.5 text-right">Medical Fee</th>
+                    <th className="px-2.5 py-1.5 text-right">Total</th>
+                    <th className="no-print rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -201,18 +201,18 @@ export default function BillingPatientBill() {
                     const total = (Number(r.doctorFeesInput) || 0) + (Number(r.extraFeesInput) || 0);
                     return (
                       <tr key={r.patientId} className="table-row">
-                        <td className="px-3 py-3">
+                        <td className="px-2.5 py-1">
                           <span className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg bg-brand-gradient px-2 text-xs font-bold text-white">
                             {r.tokenNo ?? '-'}
                           </span>
                         </td>
-                        <td className="px-3 py-3">
+                        <td className="px-2.5 py-1">
                           <p className="font-medium text-slate-700">{r.name}</p>
                           <p className="text-xs text-slate-400">{fmtTime(r.confirmedAt)}</p>
                         </td>
-                        <td className="px-3 py-3 text-slate-500">{r.mobileNo || '-'}</td>
-                        <td className="px-3 py-3"><span className={`badge ${statusTone[r.status] || 'bg-slate-100 text-slate-600'}`}>{r.status}</span></td>
-                        <td className="px-3 py-3 text-right">
+                        <td className="px-2.5 py-1 text-slate-500">{r.mobileNo || '-'}</td>
+                        <td className="px-2.5 py-1"><span className={`badge ${statusTone[r.status] || 'bg-slate-100 text-slate-600'}`}>{r.status}</span></td>
+                        <td className="px-2.5 py-1 text-right">
                           <input
                             type="number" min="0" step="0.01"
                             className="input w-24 py-1.5 text-right"
@@ -221,7 +221,7 @@ export default function BillingPatientBill() {
                             placeholder="0.00"
                           />
                         </td>
-                        <td className="px-3 py-3 text-right">
+                        <td className="px-2.5 py-1 text-right">
                           <input
                             type="number" min="0" step="0.01"
                             className="input w-24 py-1.5 text-right"
@@ -230,12 +230,12 @@ export default function BillingPatientBill() {
                             placeholder="0.00"
                           />
                         </td>
-                        <td className="px-3 py-3 text-right font-semibold text-slate-800">{fmtMoney(total)}</td>
-                        <td className="no-print px-3 py-3">
+                        <td className="px-2.5 py-1 text-right font-semibold text-slate-800">{fmtMoney(total)}</td>
+                        <td className="no-print px-2.5 py-1">
                           <div className="flex justify-end gap-1">
                             <button
                               type="button"
-                              className="btn-ghost px-2 py-1.5 text-brand-600 hover:bg-brand-50"
+                              className="btn-ghost !p-1.5 text-brand-600 hover:bg-brand-50"
                               onClick={() => saveRow(r)}
                               disabled={savingId === r.patientId}
                               title="Save Doctor Fees / Medical Fee"
@@ -244,7 +244,7 @@ export default function BillingPatientBill() {
                             </button>
                             <button
                               type="button"
-                              className="btn-ghost px-2 py-1.5 text-teal-600 hover:bg-teal-50"
+                              className="btn-ghost !p-1.5 text-teal-600 hover:bg-teal-50"
                               onClick={() => setPrintPatient(r)}
                               title="Print this patient's bill"
                             >
@@ -252,7 +252,7 @@ export default function BillingPatientBill() {
                             </button>
                             <button
                               type="button"
-                              className="btn-ghost px-2 py-1.5 text-violet-600 hover:bg-violet-50"
+                              className="btn-ghost !p-1.5 text-violet-600 hover:bg-violet-50"
                               onClick={() => printPrescriptionFor(r)}
                               disabled={printingRxId === r.patientId}
                               title="Print this patient's prescription"
@@ -267,11 +267,11 @@ export default function BillingPatientBill() {
                 </tbody>
                 <tfoot>
                   <tr className="border-t-2 border-ink-200 text-sm font-semibold text-slate-800">
-                    <td className="px-3 py-3" colSpan={4}>Total ({rows.length} patients)</td>
-                    <td className="px-3 py-3 text-right">{fmtMoney(totalDoctorFees)}</td>
-                    <td className="px-3 py-3 text-right">{fmtMoney(totalExtraFees)}</td>
-                    <td className="px-3 py-3 text-right">{fmtMoney(grandTotal)}</td>
-                    <td className="no-print px-3 py-3"></td>
+                    <td className="px-2.5 py-1" colSpan={4}>Total ({rows.length} patients)</td>
+                    <td className="px-2.5 py-1 text-right">{fmtMoney(totalDoctorFees)}</td>
+                    <td className="px-2.5 py-1 text-right">{fmtMoney(totalExtraFees)}</td>
+                    <td className="px-2.5 py-1 text-right">{fmtMoney(grandTotal)}</td>
+                    <td className="no-print px-2.5 py-1"></td>
                   </tr>
                 </tfoot>
               </table>

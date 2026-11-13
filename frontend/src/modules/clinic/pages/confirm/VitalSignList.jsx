@@ -71,35 +71,35 @@ export default function VitalSignList() {
           <EmptyState message="No vital signs found." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">Patient</th>
-                  <th className="px-3 py-3">Ht</th>
-                  <th className="px-3 py-3">Wt</th>
-                  <th className="px-3 py-3">BP</th>
-                  <th className="px-3 py-3">Pulse</th>
-                  <th className="px-3 py-3">Temp</th>
-                  <th className="px-3 py-3">Recorded</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">Patient</th>
+                  <th className="px-2.5 py-1.5">Ht</th>
+                  <th className="px-2.5 py-1.5">Wt</th>
+                  <th className="px-2.5 py-1.5">BP</th>
+                  <th className="px-2.5 py-1.5">Pulse</th>
+                  <th className="px-2.5 py-1.5">Temp</th>
+                  <th className="px-2.5 py-1.5">Recorded</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.VitalId} className="table-row">
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <p className="font-medium text-slate-700">{r.PatientName}</p>
                       <p className="text-xs text-slate-400">{r.MobileNo || '-'}</p>
                     </td>
-                    <td className="px-3 py-3 text-slate-500">{r.Height ?? '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.Weight ?? '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.BloodPressure || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.PulseRate ?? '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{r.Temperature ?? '-'}</td>
-                    <td className="px-3 py-3 text-xs text-slate-400">{fmt(r.RecordedAt)}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1 text-slate-500">{r.Height ?? '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.Weight ?? '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.BloodPressure || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.PulseRate ?? '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{r.Temperature ?? '-'}</td>
+                    <td className="px-2.5 py-1 text-xs text-slate-400">{fmt(r.RecordedAt)}</td>
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end">
-                        <button className="btn-ghost px-2 py-1" onClick={() => setEditing({ ...r })}><Pencil size={15} /></button>
+                        <button className="btn-ghost !p-1" onClick={() => setEditing({ ...r })}><Pencil size={15} /></button>
                       </div>
                     </td>
                   </tr>

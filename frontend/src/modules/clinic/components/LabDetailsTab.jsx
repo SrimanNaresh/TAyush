@@ -93,27 +93,27 @@ export default function LabDetailsTab({ show }) {
           <EmptyState message={saved ? 'No lab matches your search.' : 'No lab details saved.'} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">Lab Name</th>
-                  <th className="px-3 py-3">Phone</th>
-                  <th className="px-3 py-3">Email</th>
-                  <th className="px-3 py-3">Address</th>
-                  <th className="px-3 py-3">Report Footer</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">Lab Name</th>
+                  <th className="px-2.5 py-1.5">Phone</th>
+                  <th className="px-2.5 py-1.5">Email</th>
+                  <th className="px-2.5 py-1.5">Address</th>
+                  <th className="px-2.5 py-1.5">Report Footer</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="table-row">
-                  <td className="px-3 py-3 font-medium text-slate-700">{saved.lab_name}</td>
-                  <td className="px-3 py-3 text-slate-500">{saved.phone || '-'}</td>
-                  <td className="px-3 py-3 text-slate-500">{saved.email || '-'}</td>
-                  <td className="px-3 py-3 text-slate-500">{saved.address || '-'}</td>
-                  <td className="max-w-xs truncate px-3 py-3 text-slate-500">{saved.report_footer || '-'}</td>
-                  <td className="px-3 py-3">
+                  <td className="px-2.5 py-1 font-medium text-slate-700">{saved.lab_name}</td>
+                  <td className="px-2.5 py-1 text-slate-500">{saved.phone || '-'}</td>
+                  <td className="px-2.5 py-1 text-slate-500">{saved.email || '-'}</td>
+                  <td className="px-2.5 py-1 text-slate-500">{saved.address || '-'}</td>
+                  <td className="max-w-xs truncate px-2.5 py-1 text-slate-500">{saved.report_footer || '-'}</td>
+                  <td className="px-2.5 py-1">
                     <div className="flex justify-end gap-1">
-                      <button type="button" className="btn-ghost px-2 py-1" title="Edit lab" onClick={edit}><Pencil size={15} /></button>
+                      <button type="button" className="btn-ghost !p-1" title="Edit lab" onClick={edit}><Pencil size={15} /></button>
                     </div>
                   </td>
                 </tr>

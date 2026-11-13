@@ -210,7 +210,7 @@ export default function AllInOneReport() {
               <EmptyState message="Nothing to show for this selection." />
             ) : (
               <div className="overflow-x-auto print:overflow-visible">
-                <table className="w-full text-left text-sm print:text-xs">
+                <table className="w-full text-left text-13 print:text-xs">
                   <thead>
                     <tr className="table-head">
                       <th className={`${th} rounded-l-lg text-right`}>#</th>

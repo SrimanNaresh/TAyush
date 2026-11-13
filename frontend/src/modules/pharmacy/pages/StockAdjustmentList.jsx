@@ -68,36 +68,36 @@ export default function StockAdjustmentList() {
         />
         {loading ? <Spinner /> : rows.length === 0 ? <EmptyState message="No adjustments found." /> : (
           <div className="overflow-x-auto rounded-lg">
-            <table className="list-pinned pin-first w-full min-w-[760px] text-left text-sm">
+            <table className="list-pinned pin-first w-full min-w-[760px] text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-2">Adj No</th>
-                  <th className="px-3 py-2">Date</th>
-                  <th className="px-3 py-2">Item Name</th>
-                  <th className="px-3 py-2">Remarks</th>
-                  <th className="px-3 py-2 text-right">In Qty</th>
-                  <th className="px-3 py-2 text-right">In Value</th>
-                  <th className="px-3 py-2 text-right">Out Qty</th>
-                  <th className="px-3 py-2 text-right">Out Value</th>
-                  <th className="rounded-r-lg px-3 py-2 text-right">{isAdmin ? 'Edit / Delete' : 'Edit'}</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">Adj No</th>
+                  <th className="px-2.5 py-1.5">Date</th>
+                  <th className="px-2.5 py-1.5">Item Name</th>
+                  <th className="px-2.5 py-1.5">Remarks</th>
+                  <th className="px-2.5 py-1.5 text-right">In Qty</th>
+                  <th className="px-2.5 py-1.5 text-right">In Value</th>
+                  <th className="px-2.5 py-1.5 text-right">Out Qty</th>
+                  <th className="px-2.5 py-1.5 text-right">Out Value</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">{isAdmin ? 'Edit / Delete' : 'Edit'}</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.AdjustmentId} className="table-row">
-                    <td className="whitespace-nowrap px-3 py-1.5 font-medium text-brand-700">{r.AdjNo}</td>
-                    <td className="whitespace-nowrap px-3 py-1.5 text-slate-500">{dateLabel(r.AdjDate)}</td>
-                    <td className="max-w-xs truncate px-3 py-1.5 text-slate-600" title={r.ItemNames}>{r.ItemNames}</td>
-                    <td className="max-w-[12rem] truncate px-3 py-1.5 text-slate-500" title={r.Remarks || ''}>{r.Remarks || '-'}</td>
-                    <td className="px-3 py-1.5 text-right text-emerald-700">{Number(r.InQty) || '-'}</td>
-                    <td className="px-3 py-1.5 text-right text-emerald-700">{Number(r.InTotal) ? money(r.InTotal) : '-'}</td>
-                    <td className="px-3 py-1.5 text-right text-red-600">{Number(r.OutQty) || '-'}</td>
-                    <td className="px-3 py-1.5 text-right text-red-600">{Number(r.OutTotal) ? money(r.OutTotal) : '-'}</td>
-                    <td className="px-3 py-1.5">
+                    <td className="whitespace-nowrap px-2.5 py-1 font-medium text-brand-700">{r.AdjNo}</td>
+                    <td className="whitespace-nowrap px-2.5 py-1 text-slate-500">{dateLabel(r.AdjDate)}</td>
+                    <td className="max-w-xs truncate px-2.5 py-1 text-slate-600" title={r.ItemNames}>{r.ItemNames}</td>
+                    <td className="max-w-[12rem] truncate px-2.5 py-1 text-slate-500" title={r.Remarks || ''}>{r.Remarks || '-'}</td>
+                    <td className="px-2.5 py-1 text-right text-emerald-700">{Number(r.InQty) || '-'}</td>
+                    <td className="px-2.5 py-1 text-right text-emerald-700">{Number(r.InTotal) ? money(r.InTotal) : '-'}</td>
+                    <td className="px-2.5 py-1 text-right text-red-600">{Number(r.OutQty) || '-'}</td>
+                    <td className="px-2.5 py-1 text-right text-red-600">{Number(r.OutTotal) ? money(r.OutTotal) : '-'}</td>
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end gap-1">
-                        <button type="button" className="btn-ghost px-2 py-1" title="Edit adjustment" onClick={() => navigate('/pharmacy/stock-adjustment', { state: { editAdjustmentId: r.AdjustmentId } })}><Pencil size={15} /></button>
+                        <button type="button" className="btn-ghost !p-1" title="Edit adjustment" onClick={() => navigate('/pharmacy/stock-adjustment', { state: { editAdjustmentId: r.AdjustmentId } })}><Pencil size={15} /></button>
                         {isAdmin && (
-                          <button type="button" className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" title="Delete adjustment (Admin only)" onClick={() => remove(r)}><Trash2 size={15} /></button>
+                          <button type="button" className="btn-ghost !p-1 text-red-500 hover:bg-red-50" title="Delete adjustment (Admin only)" onClick={() => remove(r)}><Trash2 size={15} /></button>
                         )}
                       </div>
                     </td>

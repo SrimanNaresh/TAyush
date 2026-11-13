@@ -25,9 +25,9 @@ const levelStyle = {
 function AccessNode({ node, access, setLevel, depth = 0 }) {
   if (node.submenu) {
     return (
-      <div className={depth === 0 ? 'rounded-lg border border-ink-100 bg-ink-50/40 p-3' : 'ml-3 border-l border-ink-200 pl-3'}>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">{node.label}</p>
-        <div className="space-y-1.5">
+      <div className={depth === 0 ? 'rounded-lg border border-ink-100 bg-ink-50/40 px-2.5 py-2' : 'ml-2 border-l border-ink-200 pl-2'}>
+        <p className="mb-1 text-10 font-semibold uppercase tracking-wide text-ink-400">{node.label}</p>
+        <div className="space-y-1">
           {node.submenu.map((child) => (
             <AccessNode key={child.key || child.label} node={child} access={access} setLevel={setLevel} depth={depth + 1} />
           ))}
@@ -40,9 +40,9 @@ function AccessNode({ node, access, setLevel, depth = 0 }) {
 
 function AccessRow({ item, access, setLevel }) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-ink-100 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-sm font-medium text-ink-700">{item.label}</span>
-      <div className="flex gap-2">
+    <div className="flex flex-col gap-1.5 rounded-md border border-ink-100 bg-white px-2.5 py-1 sm:flex-row sm:items-center sm:justify-between">
+      <span className="min-w-0 text-13 font-medium text-ink-700">{item.label}</span>
+      <div className="flex shrink-0 flex-wrap gap-1">
         {ACCESS_LEVELS.map((lvl) => (
           <label key={lvl} className="cursor-pointer">
             <input
@@ -52,7 +52,7 @@ function AccessRow({ item, access, setLevel }) {
               checked={access[item.key] === lvl}
               onChange={() => setLevel(item.key, lvl)}
             />
-            <span className={`inline-block rounded-md border border-ink-200 px-3 py-1 text-xs font-medium text-ink-500 transition-colors ${levelStyle[lvl]}`}>
+            <span className={`inline-block rounded border border-ink-200 px-2 py-0.5 text-11 font-medium text-ink-500 transition-colors ${levelStyle[lvl]}`}>
               {lvl}
             </span>
           </label>
@@ -72,6 +72,10 @@ export default function MenuAccess() {
   const [access, setAccess] = useState(emptyAccess());
   const [loadingAccess, setLoadingAccess] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState(null);
+
+  const groups = MENU_GROUPS.filter((g) => planAllowsGroup(plan, g.group));
+  const activeGroup = groups.find((g) => g.group === tab) || groups[0];
 
   const loadUsers = useCallback(async (q = '') => {
     setLoadingUsers(true);
@@ -131,7 +135,7 @@ export default function MenuAccess() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[320px_1fr]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
         {/* LEFT: Users */}
         <div className="card h-fit">
           <CardHeader icon={User} title="Users" subtitle="Select a user" />
@@ -144,25 +148,35 @@ export default function MenuAccess() {
           ) : users.length === 0 ? (
             <EmptyState message="No users." />
           ) : (
-            <div className="max-h-[60vh] space-y-1 overflow-y-auto">
-              {users.map((u) => (
-                <button
-                  key={u.UserId}
-                  onClick={() => selectUser(u)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
-                    selectedUser?.UserId === u.UserId ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-600 hover:bg-ink-50'
-                  }`}
-                >
-                  <span className="truncate">{u.Username}</span>
-                  {!u.IsActive && <span className="badge bg-slate-100 text-slate-500">Inactive</span>}
-                </button>
-              ))}
+            <div className="max-h-[60vh] space-y-0.5 overflow-y-auto">
+              {users.map((u) => {
+                const selected = selectedUser?.UserId === u.UserId;
+                return (
+                  <button
+                    key={u.UserId}
+                    onClick={() => selectUser(u)}
+                    className={`flex w-full items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-13 transition-colors ${
+                      selected ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink-600 hover:bg-ink-50'
+                    }`}
+                  >
+                    <span className="min-w-0 truncate">{u.Username}</span>
+                    <span className="flex shrink-0 items-center gap-1">
+                      {!u.IsActive && <span className="rounded bg-slate-100 px-1.5 text-10 leading-4 text-slate-500">Inactive</span>}
+                      {u.Role && (
+                        <span className={`rounded px-1.5 text-10 font-medium leading-4 ${selected ? 'bg-brand-100 text-brand-700' : 'bg-ink-100 text-ink-500'}`}>
+                          {u.Role}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* RIGHT: Menu access */}
-        <div className="card">
+        <div className="card min-w-0">
           <CardHeader
             icon={ShieldCheck}
             title="Menu Access"
@@ -185,18 +199,39 @@ export default function MenuAccess() {
           ) : loadingAccess ? (
             <Spinner />
           ) : (
-            <div className="space-y-6">
-              {/* Only the main menus in the plan's Menu Rights (Configuration > Clinic Master > Validity) */}
-              {MENU_GROUPS.filter((g) => planAllowsGroup(plan, g.group)).map((g) => (
-                <div key={g.group}>
-                  <p className="section-title mb-2">{g.group}</p>
-                  <div className="space-y-1.5">
-                    {g.items.map((it) => (
-                      <AccessNode key={it.key || it.label} node={it} access={access} setLevel={setLevel} />
-                    ))}
-                  </div>
+            <div>
+              {/* One tab per main menu in the plan's Menu Rights (Configuration > Clinic Master > Validity) */}
+              <div className="-mt-1 mb-3 flex flex-wrap gap-x-0.5 border-b border-ink-100" role="tablist">
+                {groups.map((g) => {
+                  const leaves = ALL_MENU_ITEMS.filter((it) => it.group === g.group);
+                  const granted = leaves.filter((it) => access[it.key] !== 'No Access').length;
+                  const active = g.group === activeGroup?.group;
+                  return (
+                    <button
+                      key={g.group}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setTab(g.group)}
+                      className={`-mb-px flex shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2 py-1.5 text-13 font-semibold transition-colors ${
+                        active ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-500 hover:text-ink-800'
+                      }`}
+                    >
+                      {g.group}
+                      <span className={`rounded-full px-1.5 text-10 leading-4 ${granted ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-500'}`}>
+                        {granted}/{leaves.length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              {activeGroup && (
+                <div className="space-y-1.5" role="tabpanel">
+                  {activeGroup.items.map((it) => (
+                    <AccessNode key={it.key || it.label} node={it} access={access} setLevel={setLevel} />
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

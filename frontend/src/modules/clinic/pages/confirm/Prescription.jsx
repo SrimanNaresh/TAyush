@@ -360,33 +360,33 @@ export default function Prescription() {
                   <EmptyState message="No vital-completed patients." />
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full text-left text-13">
                       <thead>
                         <tr className="table-head">
-                          <th className="rounded-l-lg px-3 py-3">Token</th>
-                          <th className="px-3 py-3">Patient</th>
-                          <th className="px-3 py-3">Time</th>
-                          <th className="px-3 py-3">Status</th>
-                          <th className="rounded-r-lg px-3 py-3 text-right">Action</th>
+                          <th className="rounded-l-lg px-2.5 py-1.5">Token</th>
+                          <th className="px-2.5 py-1.5">Patient</th>
+                          <th className="px-2.5 py-1.5">Time</th>
+                          <th className="px-2.5 py-1.5">Status</th>
+                          <th className="rounded-r-lg px-2.5 py-1.5 text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filterRows(readyList, readySearch).map((r) => (
                           <tr key={r.ConfirmId} className="table-row cursor-pointer" onClick={() => pickFromList(r)}>
-                            <td className="px-3 py-3">
+                            <td className="px-2.5 py-1">
                               <span className="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-brand-gradient px-2 text-sm font-bold text-white">
                                 {r.TokenNo ?? '-'}
                               </span>
                             </td>
-                            <td className="px-3 py-3">
+                            <td className="px-2.5 py-1">
                               <p className="font-medium text-slate-700">{r.PatientName}</p>
                               <p className="text-xs text-slate-400">{r.MobileNo || '-'} · ID #{r.PatientId}</p>
                             </td>
-                            <td className="px-3 py-3 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
-                            <td className="px-3 py-3">
+                            <td className="px-2.5 py-1 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
+                            <td className="px-2.5 py-1">
                               <span className="badge bg-amber-100 text-amber-700">Examine</span>
                             </td>
-                            <td className="px-3 py-3 text-right">
+                            <td className="px-2.5 py-1 text-right">
                               <button className="btn-primary py-1.5" onClick={(e) => { e.stopPropagation(); pickFromList(r); }}>
                                 Examine <ChevronRight size={15} />
                               </button>
@@ -416,29 +416,29 @@ export default function Prescription() {
                   <EmptyState message="No patients sent to billing yet." />
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+                    <table className="w-full text-left text-13">
                       <thead>
                         <tr className="table-head">
-                          <th className="rounded-l-lg px-3 py-3">Token</th>
-                          <th className="px-3 py-3">Patient</th>
-                          <th className="px-3 py-3">Time</th>
-                          <th className="rounded-r-lg px-3 py-3 text-right">View</th>
+                          <th className="rounded-l-lg px-2.5 py-1.5">Token</th>
+                          <th className="px-2.5 py-1.5">Patient</th>
+                          <th className="px-2.5 py-1.5">Time</th>
+                          <th className="rounded-r-lg px-2.5 py-1.5 text-right">View</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filterRows(doneList, doneSearch).map((r) => (
                           <tr key={r.ConfirmId} className="table-row cursor-pointer" onClick={() => pickFromList(r)}>
-                            <td className="px-3 py-3">
+                            <td className="px-2.5 py-1">
                               <span className="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-emerald-500 px-2 text-sm font-bold text-white">
                                 {r.TokenNo ?? '-'}
                               </span>
                             </td>
-                            <td className="px-3 py-3">
+                            <td className="px-2.5 py-1">
                               <p className="font-medium text-slate-700">{r.PatientName}</p>
                               <p className="text-xs text-slate-400">{r.MobileNo || '-'} · ID #{r.PatientId}</p>
                             </td>
-                            <td className="px-3 py-3 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
-                            <td className="px-3 py-3 text-right">
+                            <td className="px-2.5 py-1 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
+                            <td className="px-2.5 py-1 text-right">
                               <button className="btn-secondary py-1.5" onClick={(e) => { e.stopPropagation(); pickFromList(r); }}>
                                 Open <ChevronRight size={15} />
                               </button>

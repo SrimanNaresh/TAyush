@@ -55,28 +55,28 @@ export default function TestMaster() {
         <EmptyState message="No tests yet. Add them in Lab › Masters › Test Master." />
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-13">
             <thead>
               <tr className="table-head">
-                <th className="rounded-l-lg px-3 py-3">#</th>
-                <th className="px-3 py-3">Test ID</th>
-                <th className="px-3 py-3">Test Name</th>
-                <th className="px-3 py-3 text-right">Components</th>
-                <th className="px-3 py-3 text-right">Fee</th>
-                <th className="px-3 py-3 text-right">Discount</th>
-                <th className="rounded-r-lg px-3 py-3 text-right">Net</th>
+                <th className="rounded-l-lg px-2.5 py-1.5">#</th>
+                <th className="px-2.5 py-1.5">Test ID</th>
+                <th className="px-2.5 py-1.5">Test Name</th>
+                <th className="px-2.5 py-1.5 text-right">Components</th>
+                <th className="px-2.5 py-1.5 text-right">Fee</th>
+                <th className="px-2.5 py-1.5 text-right">Discount</th>
+                <th className="rounded-r-lg px-2.5 py-1.5 text-right">Net</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r, i) => (
                 <tr key={r.TestId} className="table-row">
-                  <td className="px-3 py-2.5 text-ink-400">{i + 1}</td>
-                  <td className="px-3 py-2.5 font-mono text-12 text-ink-600">{r.TestCode}</td>
-                  <td className="px-3 py-2.5 font-medium text-ink-800">{r.TestName}</td>
-                  <td className="px-3 py-2.5 text-right text-ink-600">{r.ComponentCount}</td>
-                  <td className="px-3 py-2.5 text-right text-ink-600">{money(r.Fee)}</td>
-                  <td className="px-3 py-2.5 text-right text-ink-600">{money(r.Discount)}</td>
-                  <td className="px-3 py-2.5 text-right font-semibold text-ink-800">{money(r.NetAmount)}</td>
+                  <td className="px-2.5 py-1 text-ink-400">{i + 1}</td>
+                  <td className="px-2.5 py-1 font-mono text-12 text-ink-600">{r.TestCode}</td>
+                  <td className="px-2.5 py-1 font-medium text-ink-800">{r.TestName}</td>
+                  <td className="px-2.5 py-1 text-right text-ink-600">{r.ComponentCount}</td>
+                  <td className="px-2.5 py-1 text-right text-ink-600">{money(r.Fee)}</td>
+                  <td className="px-2.5 py-1 text-right text-ink-600">{money(r.Discount)}</td>
+                  <td className="px-2.5 py-1 text-right font-semibold text-ink-800">{money(r.NetAmount)}</td>
                 </tr>
               ))}
             </tbody>

@@ -141,7 +141,7 @@ export default function StockReport() {
           <EmptyState message="No items match." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
+            <table className="w-full min-w-[900px] text-left text-13">
               <thead>
                 <tr className="table-head">
                   <th className={`${th} rounded-l-lg`}>Item Code</th>
@@ -186,7 +186,7 @@ export default function StockReport() {
                       </tr>
                       {open && (
                         <tr className="bg-ink-50/60">
-                          <td colSpan={12} className="px-4 py-2"><History itemId={r.ItemId} /></td>
+                          <td colSpan={12} className="px-2.5 py-1"><History itemId={r.ItemId} /></td>
                         </tr>
                       )}
                     </Fragment>

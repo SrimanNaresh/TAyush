@@ -4,6 +4,16 @@ import { NEXT_PATIENT_CODE_SQL } from '../../core/patientCode.js';
 
 const router = Router();
 
+const REFERRAL_TYPES = ['Doctor', 'Patient'];
+
+// Referral is optional. Only a 'Doctor' referral keeps a clinic/hospital name
+// (stored in ReferredBy, the column the Lab module also uses).
+function readReferral(body) {
+  const type = REFERRAL_TYPES.includes(body.referralType) ? body.referralType : null;
+  const referredBy = type === 'Doctor' ? (body.referredBy || '').toString().trim() || null : null;
+  return { type, referredBy };
+}
+
 // List / search by name or mobile
 router.get('/', async (req, res) => {
   try {
@@ -14,7 +24,7 @@ router.get('/', async (req, res) => {
       .input('search', sql.NVarChar, `%${search}%`)
       .input('mobile', sql.NVarChar, `%${mobile}%`)
       .query(`
-        SELECT PatientId, Name, MobileNo, Address, Age, CreatedAt
+        SELECT PatientId, Name, MobileNo, Address, Age, ReferralType, ReferredBy, CreatedAt
         FROM Patient
         WHERE IsActive = 1
           AND (@search = '%%' OR Name LIKE @search)
@@ -60,6 +70,7 @@ router.post('/', async (req, res) => {
   try {
     const { name, mobileNo, address, age } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
+    const referral = readReferral(req.body);
     const pool = await getPool();
     const result = await pool
       .request()
@@ -67,10 +78,12 @@ router.post('/', async (req, res) => {
       .input('mobileNo', sql.NVarChar, mobileNo || null)
       .input('address', sql.NVarChar, address || null)
       .input('age', sql.Int, age || null)
+      .input('referralType', sql.NVarChar, referral.type)
+      .input('referredBy', sql.NVarChar, referral.referredBy)
       .query(`
-        INSERT INTO Patient (Name, MobileNo, Address, Age, PatientCode)
+        INSERT INTO Patient (Name, MobileNo, Address, Age, ReferralType, ReferredBy, PatientCode)
         OUTPUT INSERTED.*
-        VALUES (@name, @mobileNo, @address, @age, ${NEXT_PATIENT_CODE_SQL})
+        VALUES (@name, @mobileNo, @address, @age, @referralType, @referredBy, ${NEXT_PATIENT_CODE_SQL})
       `);
     res.status(201).json(result.recordset[0]);
   } catch (err) {
@@ -81,6 +94,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, mobileNo, address, age } = req.body;
+    const referral = readReferral(req.body);
     const pool = await getPool();
     const result = await pool
       .request()
@@ -89,8 +103,11 @@ router.put('/:id', async (req, res) => {
       .input('mobileNo', sql.NVarChar, mobileNo || null)
       .input('address', sql.NVarChar, address || null)
       .input('age', sql.Int, age || null)
+      .input('referralType', sql.NVarChar, referral.type)
+      .input('referredBy', sql.NVarChar, referral.referredBy)
       .query(`
-        UPDATE Patient SET Name=@name, MobileNo=@mobileNo, Address=@address, Age=@age
+        UPDATE Patient SET Name=@name, MobileNo=@mobileNo, Address=@address, Age=@age,
+          ReferralType=@referralType, ReferredBy=@referredBy, UpdatedAt=GETDATE()
         OUTPUT INSERTED.*
         WHERE PatientId=@id
       `);

@@ -102,34 +102,34 @@ export default function ConfirmList() {
           <EmptyState message={rows.length === 0 ? 'No confirmed patients for this date.' : 'No matching patients found.'} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">Token</th>
-                  <th className="px-3 py-3">Patient</th>
-                  <th className="px-3 py-3">Status</th>
-                  <th className="px-3 py-3">Vital Sign</th>
-                  <th className="px-3 py-3">Mobile</th>
-                  <th className="px-3 py-3">Confirmed</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                  <th className="rounded-l-lg px-2.5 py-1.5">Token</th>
+                  <th className="px-2.5 py-1.5">Patient</th>
+                  <th className="px-2.5 py-1.5">Status</th>
+                  <th className="px-2.5 py-1.5">Vital Sign</th>
+                  <th className="px-2.5 py-1.5">Mobile</th>
+                  <th className="px-2.5 py-1.5">Confirmed</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {visibleRows.map((r) => (
                   <tr key={r.ConfirmId} className="table-row">
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <span className="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-brand-gradient px-2 text-sm font-bold text-white">
                         {r.TokenNo ?? '-'}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <p className="font-medium text-slate-700">{r.PatientName}</p>
                       <p className="text-xs text-slate-400">ID #{r.PatientId}</p>
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <span className={`badge ${statusColor[r.Status] || 'bg-slate-100 text-slate-600'}`}>{r.Status}</span>
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       {r.Status !== 'Billing' && r.Status !== 'Completed' ? (
                         <button
                           className="inline-flex items-center gap-1.5 rounded-lg bg-rose-100 px-2.5 py-1.5 text-xs font-semibold text-rose-700 shadow-sm transition-colors hover:bg-rose-200"
@@ -142,12 +142,12 @@ export default function ConfirmList() {
                         <span className="text-slate-300">-</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-slate-500">{r.MobileNo || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1 text-slate-500">{r.MobileNo || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{fmtTime(r.ConfirmedAt)}</td>
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end gap-1">
                         {(isAdmin || r.Status === 'Confirm') && (
-                          <button className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" title="Remove" onClick={() => remove(r)}>
+                          <button className="btn-ghost !p-1 text-red-500 hover:bg-red-50" title="Remove" onClick={() => remove(r)}>
                             <Trash2 size={15} />
                           </button>
                         )}

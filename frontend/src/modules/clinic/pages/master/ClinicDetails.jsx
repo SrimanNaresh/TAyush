@@ -240,25 +240,25 @@ export default function ClinicDetails() {
             <EmptyState message={savedClinic ? 'No clinic matches your search.' : 'No clinic details saved.'} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-13">
                 <thead>
                   <tr className="table-head">
-                    <th className="rounded-l-lg px-3 py-3">Clinic Name</th>
-                    <th className="px-3 py-3">Doctor</th>
-                    <th className="px-3 py-3">Contact</th>
-                    <th className="px-3 py-3">Address</th>
-                    <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                    <th className="rounded-l-lg px-2.5 py-1.5">Clinic Name</th>
+                    <th className="px-2.5 py-1.5">Doctor</th>
+                    <th className="px-2.5 py-1.5">Contact</th>
+                    <th className="px-2.5 py-1.5">Address</th>
+                    <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="table-row">
-                    <td className="px-3 py-3 font-medium text-slate-700">{savedClinic.Name}</td>
-                    <td className="px-3 py-3 text-slate-500">{savedClinic.DoctorName || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{savedClinic.ContactNo || '-'}</td>
-                    <td className="px-3 py-3 text-slate-500">{savedClinic.Address || '-'}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1 font-medium text-slate-700">{savedClinic.Name}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{savedClinic.DoctorName || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{savedClinic.ContactNo || '-'}</td>
+                    <td className="px-2.5 py-1 text-slate-500">{savedClinic.Address || '-'}</td>
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end gap-1">
-                        <button type="button" className="btn-ghost px-2 py-1" title="Edit clinic" onClick={editClinic}><Pencil size={15} /></button>
+                        <button type="button" className="btn-ghost !p-1" title="Edit clinic" onClick={editClinic}><Pencil size={15} /></button>
                       </div>
                     </td>
                   </tr>
@@ -312,25 +312,25 @@ export default function ClinicDetails() {
             <EmptyState message="No pharmacies found." />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-13">
                 <thead>
                   <tr className="table-head">
-                    <th className="rounded-l-lg px-3 py-3">Pharmacy Name</th>
-                    <th className="px-3 py-3">Address</th>
-                    <th className="px-3 py-3">Contact No</th>
-                    <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                    <th className="rounded-l-lg px-2.5 py-1.5">Pharmacy Name</th>
+                    <th className="px-2.5 py-1.5">Address</th>
+                    <th className="px-2.5 py-1.5">Contact No</th>
+                    <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pharmacyRows.map((r) => (
                     <tr key={r.PharmacyId} className="table-row">
-                      <td className="px-3 py-3 font-medium text-slate-700">{r.Name}</td>
-                      <td className="px-3 py-3 text-slate-500">{r.Address || '-'}</td>
-                      <td className="px-3 py-3 text-slate-500">{r.ContactNo || '-'}</td>
-                      <td className="px-3 py-3">
+                      <td className="px-2.5 py-1 font-medium text-slate-700">{r.Name}</td>
+                      <td className="px-2.5 py-1 text-slate-500">{r.Address || '-'}</td>
+                      <td className="px-2.5 py-1 text-slate-500">{r.ContactNo || '-'}</td>
+                      <td className="px-2.5 py-1">
                         <div className="flex justify-end gap-1">
-                          <button type="button" className="btn-ghost px-2 py-1" title="Edit pharmacy" onClick={() => setPharmacyEditing({ ...r })}><Pencil size={15} /></button>
-                          <button type="button" className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" title="Delete pharmacy" onClick={() => deletePharmacy(r)}><Trash2 size={15} /></button>
+                          <button type="button" className="btn-ghost !p-1" title="Edit pharmacy" onClick={() => setPharmacyEditing({ ...r })}><Pencil size={15} /></button>
+                          <button type="button" className="btn-ghost !p-1 text-red-500 hover:bg-red-50" title="Delete pharmacy" onClick={() => deletePharmacy(r)}><Trash2 size={15} /></button>
                         </div>
                       </td>
                     </tr>

@@ -101,11 +101,11 @@ export default function UserMaster() {
   };
 
   return (
-    <div className="space-y-5">
-      {/* Create form */}
+    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+      {/* Create form (left) */}
       <form onSubmit={submit} className="card">
         <CardHeader icon={ShieldCheck} title="User Master" subtitle="Create a login user" />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:items-end">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
           <div>
             <label className="label">User Name *</label>
             <input className="input" value={form.username} onChange={update('username')} placeholder="User name" />
@@ -126,7 +126,7 @@ export default function UserMaster() {
           </div>
           <div>
             <label className="label">Active</label>
-            <label className="flex h-[42px] cursor-pointer items-center gap-2 rounded-lg border border-ink-200 px-3 text-sm text-ink-600">
+            <label className="input flex cursor-pointer items-center gap-2 text-ink-600">
               <input type="checkbox" className="h-4 w-4 rounded border-ink-300 text-brand-600 focus:ring-brand-300" checked={form.isActive} onChange={update('isActive')} />
               {form.isActive ? 'Active' : 'Inactive'}
             </label>
@@ -140,7 +140,7 @@ export default function UserMaster() {
               </select>
             </div>
           )}
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <button type="submit" className="btn-primary w-full" disabled={saving}>
               <Save size={16} /> {saving ? 'Saving...' : 'Save User'}
             </button>
@@ -148,14 +148,14 @@ export default function UserMaster() {
         </div>
       </form>
 
-      {/* List */}
-      <div className="card">
+      {/* List (right) */}
+      <div className="card min-w-0">
         <CardHeader
           icon={Users}
           title="User List"
           subtitle="Search, edit and delete users"
           actions={
-            <div className="relative w-full sm:w-72">
+            <div className="relative w-full sm:w-64">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
               <input className="input pl-9" placeholder="Search by username or name..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
@@ -168,38 +168,38 @@ export default function UserMaster() {
           <EmptyState message="No users found." />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-13">
               <thead>
                 <tr className="table-head">
-                  <th className="rounded-l-lg px-3 py-3">#</th>
-                  <th className="px-3 py-3">User Name</th>
-                  <th className="px-3 py-3">Full Name</th>
-                  <th className="px-3 py-3">Role</th>
-                  <th className="px-3 py-3">Active</th>
-                  <th className="rounded-r-lg px-3 py-3 text-right">Actions</th>
+                  <th className="w-10 rounded-l-lg px-2.5 py-1.5">#</th>
+                  <th className="px-2.5 py-1.5">User Name</th>
+                  <th className="px-2.5 py-1.5">Full Name</th>
+                  <th className="px-2.5 py-1.5">Role</th>
+                  <th className="px-2.5 py-1.5">Active</th>
+                  <th className="rounded-r-lg px-2.5 py-1.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={r.UserId} className="table-row">
-                    <td className="px-3 py-3 text-slate-400">{i + 1}</td>
-                    <td className="px-3 py-3 font-medium text-slate-700">{r.Username}</td>
-                    <td className="px-3 py-3 text-slate-600">{r.FullName || '—'}</td>
-                    <td className="px-3 py-3 text-slate-600">
+                    <td className="px-2.5 py-1 text-slate-400">{i + 1}</td>
+                    <td className="px-2.5 py-1 font-medium text-slate-700">{r.Username}</td>
+                    <td className="px-2.5 py-1 text-slate-600">{r.FullName || '—'}</td>
+                    <td className="px-2.5 py-1 text-slate-600">
                       {r.Role || 'Staff'}
                       {r.Role === 'Patient' && r.LinkedPatientName && <span className="block text-11 text-ink-400">{r.LinkedPatientName}</span>}
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       {r.IsActive ? (
-                        <span className="badge bg-emerald-100 text-emerald-700">Active</span>
+                        <span className="badge !py-0 !text-11 bg-emerald-100 text-emerald-700">Active</span>
                       ) : (
-                        <span className="badge bg-slate-100 text-slate-500">Inactive</span>
+                        <span className="badge !py-0 !text-11 bg-slate-100 text-slate-500">Inactive</span>
                       )}
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-2.5 py-1">
                       <div className="flex justify-end gap-1">
-                        <button className="btn-ghost px-2 py-1" onClick={() => setEditing({ ...r, NewPassword: '' })}><Pencil size={15} /></button>
-                        <button className="btn-ghost px-2 py-1 text-red-500 hover:bg-red-50" onClick={() => remove(r)}><Trash2 size={15} /></button>
+                        <button className="btn-ghost !p-1" onClick={() => setEditing({ ...r, NewPassword: '' })}><Pencil size={15} /></button>
+                        <button className="btn-ghost !p-1 text-red-500 hover:bg-red-50" onClick={() => remove(r)}><Trash2 size={15} /></button>
                       </div>
                     </td>
                   </tr>
