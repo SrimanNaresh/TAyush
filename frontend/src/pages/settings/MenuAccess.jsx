@@ -203,7 +203,7 @@ export default function MenuAccess() {
               {/* One tab per main menu in the plan's Menu Rights (Configuration > Clinic Master > Validity) */}
               <div className="-mt-1 mb-3 flex flex-wrap gap-x-0.5 border-b border-ink-100" role="tablist">
                 {groups.map((g) => {
-                  const leaves = ALL_MENU_ITEMS.filter((it) => it.group === g.group);
+                  const leaves = ALL_MENU_ITEMS.filter((it) => it.group === g.group && !it.superAdminOnly);
                   const granted = leaves.filter((it) => access[it.key] !== 'No Access').length;
                   const active = g.group === activeGroup?.group;
                   return (
@@ -227,7 +227,7 @@ export default function MenuAccess() {
               </div>
               {activeGroup && (
                 <div className="space-y-1.5" role="tabpanel">
-                  {activeGroup.items.map((it) => (
+                  {activeGroup.items.filter((it) => !it.superAdminOnly).map((it) => (
                     <AccessNode key={it.key || it.label} node={it} access={access} setLevel={setLevel} />
                   ))}
                 </div>

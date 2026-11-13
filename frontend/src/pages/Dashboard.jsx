@@ -17,8 +17,8 @@ export default function Dashboard() {
   const { user } = useAuth();
   const menu = useMenu().filter((g) => g.label !== 'Dashboard');
 
-  // Admin / Super Admin: only the all-activity page (screens are in the menu).
-  if (user?.role === 'Admin') return <SuperDashboard />;
+  // Super Admin only: the all-activity page. Everyone else gets the module cards.
+  if (user?.isSuperAdmin) return <SuperDashboard />;
 
   return (
     <div className="space-y-4">

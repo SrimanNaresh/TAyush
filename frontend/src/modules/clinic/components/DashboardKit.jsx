@@ -77,7 +77,7 @@ export function QuickActionsPanel({ links }) {
   const q = qSearch.trim().toLowerCase();
   const shown = q ? links.filter((l) => `${l.label} ${l.desc}`.toLowerCase().includes(q)) : links;
   const others = q
-    ? ALL_MENU_ITEMS.filter((m) => !links.some((l) => l.to === m.to) && `${m.group} ${m.label}`.toLowerCase().includes(q)).slice(0, 8)
+    ? ALL_MENU_ITEMS.filter((m) => !m.superAdminOnly && !links.some((l) => l.to === m.to) && `${m.group} ${m.label}`.toLowerCase().includes(q)).slice(0, 8)
     : [];
 
   return (

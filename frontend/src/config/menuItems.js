@@ -17,7 +17,8 @@ export const MENU_GROUPS = [
   {
     group: 'Dashboard',
     items: [
-      { key: 'dashboard', label: 'Dashboard', to: '/dashboard' },
+      // Shown only to a Super Admin login (see makeAllowed); not assignable in Menu Access.
+      { key: 'dashboard', label: 'Super Admin Dashboard', to: '/dashboard', superAdminOnly: true },
       ...CLINIC_DASHBOARDS,
     ],
   },
@@ -68,10 +69,14 @@ export const ALL_MENU_ITEMS = MENU_GROUPS.flatMap((g) => flattenLeaves(g.items, 
 
 export const ACCESS_LEVELS = ['Full', 'View', 'No Access'];
 
-// Admin always sees every page. Any other login sees only the pages granted
-// Full / View in Menu Access (nothing granted yet = Dashboard only), so a new
-// pharmacy login never sees clinic or lab screens by default.
+// The Super Admin Dashboard is shown only to a Super Admin login. Otherwise
+// Admin sees every page, and any other login sees only the pages granted
+// Full / View in Menu Access, so a new pharmacy login never sees clinic or
+// lab screens by default.
 export function makeAllowed(user, accessMap) {
-  if (user?.role === 'Admin') return () => true;
-  return (key) => key === 'dashboard' || ['Full', 'View'].includes(accessMap?.get(key));
+  return (key) => {
+    if (key === 'dashboard') return !!user?.isSuperAdmin;
+    if (user?.role === 'Admin') return true;
+    return ['Full', 'View'].includes(accessMap?.get(key));
+  };
 }
