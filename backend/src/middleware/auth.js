@@ -1,8 +1,47 @@
 import { verifyToken } from '../utils/jwt.js';
 import { getPool, sql } from '../db/pool.js';
 
-// Every protected request re-reads the user (as Lab did), so a switched-off
-// login or a role change takes effect at once rather than at token expiry.
+// The database is on another machine, so each lookup costs a network round
+// trip. The login row and its Menu Access rows are kept in memory for a short
+// time instead of being re-read on every request. Any change made through
+// Users or Menu Access clears the cache at once (clearAuthCache), so a
+// switched-off login or a role/access change still applies immediately; a
+// change made straight in the database applies within CACHE_MS.
+const CACHE_MS = 60 * 1000;
+const userCache = new Map();   // userId -> { at, user }
+const accessCache = new Map(); // userId -> { at, rows }
+
+function fresh(entry) {
+  return entry && Date.now() - entry.at < CACHE_MS;
+}
+
+export function clearAuthCache() {
+  userCache.clear();
+  accessCache.clear();
+}
+
+async function loadUser(userId) {
+  const hit = userCache.get(userId);
+  if (fresh(hit)) return hit.user;
+  const pool = await getPool();
+  const r = await pool.request().input('id', sql.Int, userId)
+    .query('SELECT UserId, Username, FullName, Role, IsActive, LinkedPatientId, IsSuperAdmin FROM AppUser WHERE UserId = @id');
+  const user = r.recordset[0] || null;
+  userCache.set(userId, { at: Date.now(), user });
+  return user;
+}
+
+async function loadAccess(userId) {
+  const hit = accessCache.get(userId);
+  if (fresh(hit)) return hit.rows;
+  const pool = await getPool();
+  const r = await pool.request().input('u', sql.Int, userId).query('SELECT MenuKey, AccessLevel FROM MenuAccess WHERE UserId = @u');
+  accessCache.set(userId, { at: Date.now(), rows: r.recordset });
+  return r.recordset;
+}
+
+// Every protected request checks the user is still active (from the short
+// cache above), so a switched-off login stops working straight away.
 export async function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
@@ -14,10 +53,7 @@ export async function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Session expired, please log in again' });
   }
   try {
-    const pool = await getPool();
-    const r = await pool.request().input('id', sql.Int, payload.userId)
-      .query('SELECT UserId, Username, FullName, Role, IsActive, LinkedPatientId, IsSuperAdmin FROM AppUser WHERE UserId = @id');
-    const u = r.recordset[0];
+    const u = await loadUser(payload.userId);
     if (!u || !u.IsActive) return res.status(401).json({ error: 'Your login is not active' });
     req.user = { userId: u.UserId, username: u.Username, fullName: u.FullName, role: u.Role, linkedPatientId: u.LinkedPatientId, isSuperAdmin: !!u.IsSuperAdmin };
     next();
@@ -42,9 +78,8 @@ async function hasAccess(user, keys, level) {
   if (user?.role === 'Admin') return true;
   if (!user?.userId) return false;
   const levels = level === 'View' ? ['Full', 'View'] : ['Full'];
-  const pool = await getPool();
-  const r = await pool.request().input('u', sql.Int, user.userId).query('SELECT MenuKey, AccessLevel FROM MenuAccess WHERE UserId = @u');
-  return r.recordset.some((row) => keys.includes(row.MenuKey) && levels.includes(row.AccessLevel));
+  const rows = await loadAccess(user.userId);
+  return rows.some((row) => keys.includes(row.MenuKey) && levels.includes(row.AccessLevel));
 }
 
 export function requireAccess(keys, level = 'Full') {

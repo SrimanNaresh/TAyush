@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import { getPool, sql } from '../../db/pool.js';
-import { adminOnly } from '../../middleware/auth.js';
+import { adminOnly, clearAuthCache } from '../../middleware/auth.js';
 
 const router = Router();
+
+// Any change to logins or their access clears the auth cache once it is saved.
+router.use((req, res, next) => {
+  if (req.method !== 'GET') res.on('finish', clearAuthCache);
+  next();
+});
 
 const LEVELS = ['Full', 'View', 'No Access'];
 

@@ -119,8 +119,28 @@ def deploy(c):
     print('\n--- server status ---')
     status(c)
     code, _ = run(c, f'test -L /etc/nginx/sites-enabled/{NEW_SITE}', check=False, quiet=True)
+    if code == 0:
+        update_nginx_site(c)
     where = f'https://{DOMAIN} is live with this version.' if code == 0 else f'{DOMAIN} still serves the old suite until "cutover".'
     print(f'\nDeployed. API on port {PORT}. {where}')
+
+
+def update_nginx_site(c):
+    """After cutover: apply changes in deploy/nginx-tayush.conf. Keeps a copy of
+    the current site and puts it back if nginx rejects the new one."""
+    live = f'/etc/nginx/sites-available/{NEW_SITE}'
+    new = f'{APP_DIR}/deploy/nginx-tayush.conf'
+    code, _ = run(c, f'cmp -s {new} {live}', check=False, quiet=True)
+    if code == 0:
+        return
+    print('nginx site changed: applying it')
+    run(c, f'cp -a {live} {live}.bak && cp {new} {live}')
+    code, _ = run(c, 'nginx -t', check=False)
+    if code != 0:
+        print('nginx test failed: keeping the previous site')
+        run(c, f'cp -a {live}.bak {live}')
+        return
+    run(c, 'systemctl reload nginx')
 
 
 def cutover(c):
