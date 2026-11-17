@@ -62,13 +62,15 @@ export default function VendorPaymentEntry() {
   }, [location.state, location.pathname, navigate]);
 
   const vendorOptions = useMemo(() => vendors.map((v) => ({ value: String(v.VendorId), label: v.VendorName })), [vendors]);
+  // Invoice No with the supplier's Bill No, so either can be searched.
+  const invLabel = (i) => `${i.InvoiceNo}${i.BillNo ? ` · Bill ${i.BillNo}` : ''}`;
   const invoiceOptions = useMemo(() => {
     const opts = invoices.map((i) => ({
-      value: String(i.StockInId), label: i.InvoiceNo,
+      value: String(i.StockInId), label: invLabel(i),
       hint: `${dateLabel(i.InDate)}${vendorId ? '' : ` · ${i.VendorName}`} · ${i.Balance > 0 ? `Bal ₹${money(i.Balance)}` : 'Paid'}`,
     }));
     // Keep the chosen invoice pickable even once it's fully paid and drops off the list.
-    if (inv && !opts.some((o) => o.value === String(inv.StockInId))) opts.push({ value: String(inv.StockInId), label: inv.InvoiceNo, hint: 'Paid' });
+    if (inv && !opts.some((o) => o.value === String(inv.StockInId))) opts.push({ value: String(inv.StockInId), label: invLabel(inv), hint: 'Paid' });
     return opts;
   }, [invoices, vendorId, inv]);
 
@@ -170,6 +172,7 @@ export default function VendorPaymentEntry() {
           <>
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 rounded-lg bg-ink-50 px-3 py-2 text-sm">
               <span><span className="text-ink-500">Invoice No:</span> <b className="text-brand-700">{inv.InvoiceNo}</b></span>
+              <span><span className="text-ink-500">Bill No:</span> <b>{inv.BillNo || '—'}</b></span>
               <span><span className="text-ink-500">Date:</span> {dateLabel(inv.InDate)}</span>
               <span><span className="text-ink-500">Vendor:</span> <b>{inv.VendorName}</b></span>
               <span><span className="text-ink-500">Purchase No:</span> {inv.OrderNo}</span>

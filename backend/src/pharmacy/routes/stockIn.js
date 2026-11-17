@@ -95,7 +95,7 @@ router.get('/', async (req, res) => {
     const { search = '' } = req.query;
     const pool = await getPool();
     const r = await pool.request().input('search', sql.NVarChar, `%${search}%`).query(`
-      SELECT h.StockInId, ${SI_NO} AS StockInNo, h.InDate, h.VendorId, v.VendorName, ${PO_NO} AS OrderNo,
+      SELECT h.StockInId, ${SI_NO} AS StockInNo, h.InDate, h.BillNo, h.VendorId, v.VendorName, ${PO_NO} AS OrderNo,
              l.LineId, l.ItemId, i.Name AS ItemName, l.BatchNo, l.MfgDate, l.ExpDate, l.Quantity, l.FreeQty, l.Rate, l.MRP,
              l.SalesPercent, l.DiscPercent, l.SelAmount
       FROM StockIn h
@@ -104,7 +104,7 @@ router.get('/', async (req, res) => {
       JOIN StockInItem l ON l.StockInId = h.StockInId
       JOIN PharmacyItem i ON i.ItemId = l.ItemId
       WHERE h.IsActive = 1
-        AND (@search = '%%' OR i.Name LIKE @search OR l.BatchNo LIKE @search OR ${SI_NO} LIKE @search OR v.VendorName LIKE @search)
+        AND (@search = '%%' OR i.Name LIKE @search OR l.BatchNo LIKE @search OR ${SI_NO} LIKE @search OR h.BillNo LIKE @search OR v.VendorName LIKE @search)
       ORDER BY h.InDate DESC, h.StockInId DESC, l.LineId`);
     res.json(r.recordset);
   } catch (err) {
@@ -133,7 +133,7 @@ router.get('/:id', async (req, res) => {
     const pool = await getPool();
     const id = Number(req.params.id);
     const head = await pool.request().input('id', sql.Int, id).query(`
-      SELECT h.StockInId, ${SI_NO} AS StockInNo, h.InDate, h.VendorId, v.VendorName, h.PurchaseOrderId, ${PO_NO} AS OrderNo
+      SELECT h.StockInId, ${SI_NO} AS StockInNo, h.InDate, h.BillNo, h.VendorId, v.VendorName, h.PurchaseOrderId, ${PO_NO} AS OrderNo
       FROM StockIn h JOIN Vendor v ON v.VendorId = h.VendorId JOIN PurchaseOrder po ON po.PurchaseOrderId = h.PurchaseOrderId
       WHERE h.StockInId = @id AND h.IsActive = 1`);
     if (!head.recordset.length) return res.status(404).json({ error: 'Stock In not found' });
@@ -152,6 +152,12 @@ async function checkStockIn(tx, body, stockInId) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(inDate) || Number.isNaN(Date.parse(inDate))) return { error: 'Date is required' };
   const vendorId = Number(body.vendorId);
   if (!(vendorId > 0)) return { error: 'Vendor Name is required' };
+  // Bill No (the supplier's invoice number): required when sent (Three in One
+  // sends it); the Stock In screen doesn't, and an edit there keeps it as it was.
+  const hasBillNo = body.billNo !== undefined;
+  const billNo = text(body.billNo).toUpperCase();
+  if (hasBillNo && !billNo) return { error: 'Bill No is required' };
+  if (billNo.length > 50) return { error: 'Bill No must be at most 50 characters' };
   const orderId = Number(body.purchaseOrderId);
   if (!(orderId > 0)) return { error: 'Purchase No is required' };
   const po = await new sql.Request(tx).input('id', sql.Int, orderId)
@@ -200,7 +206,7 @@ async function checkStockIn(tx, body, stockInId) {
     lines.push({ poLineId: po.PoLineId, itemId: po.ItemId, batch, mfg: mfg ? firstDay(mfg) : null, exp: lastDay(exp), qty, free, rate, mrp, salesPercent, discPercent, sel });
   }
   if (!lines.length) return { error: 'Enter a Received quantity on at least one line' };
-  return { inDate, vendorId, orderId, lines };
+  return { inDate, vendorId, orderId, hasBillNo, billNo: billNo || null, lines };
 }
 
 async function saveStockIn(req, res, stockInId) {
@@ -221,15 +227,16 @@ async function saveStockIn(req, res, stockInId) {
     // Batches this Stock In had before the edit, to check none goes below zero after it.
     const touched = [];
     let id = stockInId;
-    const head = new sql.Request(tx).input('date', sql.Date, s.inDate).input('vendorId', sql.Int, s.vendorId).input('orderId', sql.Int, s.orderId);
+    const head = new sql.Request(tx).input('date', sql.Date, s.inDate).input('vendorId', sql.Int, s.vendorId).input('orderId', sql.Int, s.orderId)
+      .input('billNo', sql.NVarChar(50), s.billNo).input('hasBillNo', sql.Bit, s.hasBillNo);
     if (stockInId) {
       const before = await new sql.Request(tx).input('id', sql.Int, stockInId).query('SELECT ItemId FROM StockInItem WHERE StockInId = @id');
       touched.push(...before.recordset.map((r) => r.ItemId));
-      await head.input('id', sql.Int, stockInId).query('UPDATE StockIn SET InDate = @date, VendorId = @vendorId, PurchaseOrderId = @orderId WHERE StockInId = @id');
+      await head.input('id', sql.Int, stockInId).query('UPDATE StockIn SET InDate = @date, VendorId = @vendorId, PurchaseOrderId = @orderId, BillNo = CASE WHEN @hasBillNo = 1 THEN @billNo ELSE BillNo END WHERE StockInId = @id');
       await new sql.Request(tx).input('id', sql.Int, stockInId).query('DELETE FROM StockInItem WHERE StockInId = @id');
     } else {
       const ins = await head.input('by', sql.NVarChar(100), req.user?.username || null)
-        .query('INSERT INTO StockIn (InDate, VendorId, PurchaseOrderId, CreatedBy) OUTPUT INSERTED.StockInId VALUES (@date, @vendorId, @orderId, @by)');
+        .query('INSERT INTO StockIn (InDate, VendorId, PurchaseOrderId, BillNo, CreatedBy) OUTPUT INSERTED.StockInId VALUES (@date, @vendorId, @orderId, @billNo, @by)');
       id = ins.recordset[0].StockInId;
     }
     for (const l of s.lines) {

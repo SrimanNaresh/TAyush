@@ -124,6 +124,7 @@ export default function StockIps() {
   const [items, setItems] = useState([]);
   const [vendorId, setVendorId] = useState('');
   const [date, setDate] = useState(today());
+  const [billNo, setBillNo] = useState('');
   const [roundOn, setRoundOn] = useState(true);
   const [rows, setRows] = useState(() => [emptyRow()]);
   const [lastRates, setLastRates] = useState({});
@@ -234,7 +235,7 @@ export default function StockIps() {
   };
   const addRowAfter = (key) => setRows((rs) => { const i = rs.findIndex((r) => r.key === key); return [...rs.slice(0, i + 1), emptyRow(), ...rs.slice(i + 1)]; });
   const removeRow = (key) => setRows((rs) => (rs.length > 1 ? rs.filter((r) => r.key !== key) : [emptyRow()]));
-  const reset = () => { setRows([emptyRow()]); setSavedPo(null); setDate(today()); setVendorId(''); setDetails(''); setShowDetails(false); setNewVendor(null); };
+  const reset = () => { setRows([emptyRow()]); setSavedPo(null); setDate(today()); setBillNo(''); setVendorId(''); setDetails(''); setShowDetails(false); setNewVendor(null); };
 
   // Scanned lines fill the table (after the rows already typed in); repeats are left out.
   const fromBill = (lines, { supplier } = {}) => {
@@ -266,6 +267,7 @@ export default function StockIps() {
   const save = async () => {
     if (!vendorId) return show('Vendor Name is required', 'error');
     if (!date) return show('Date is required', 'error');
+    if (!billNo.trim()) return show('Bill No is required', 'error');
     const lines = view.filter((v) => v.isUsed);
     if (!lines.length) return show('Add at least one line (or Scan Bill)', 'error');
     const bad = lines.find((v) => v.problem);
@@ -320,7 +322,7 @@ export default function StockIps() {
       // 3. The Stock In for everything on the order (its lines are in the rows' order).
       const poLines = await stockInApi.orderLines(po.id);
       const si = await stockInApi.create({
-        vendorId: Number(vendorId), purchaseOrderId: po.id, inDate: date,
+        vendorId: Number(vendorId), purchaseOrderId: po.id, inDate: date, billNo: billNo.trim(),
         lines: lines.map(({ r }, i) => ({
           poLineId: poLines[i]?.PoLineId, batchNo: r.batch.trim(), mfgMonth: toMonth(r.mfg), expMonth: toMonth(r.exp),
           quantity: r.qty, freeQty: r.free || 0, discPercent: r.sDisc || 0,
@@ -422,6 +424,10 @@ export default function StockIps() {
         <div className="w-40">
           <label className="label">Date *</label>
           <input type="date" className="input" value={date} disabled={lockedOrder} onChange={(e) => setDate(e.target.value)} />
+        </div>
+        <div className="w-40">
+          <label className="label">Bill No *</label>
+          <input className="input uppercase" maxLength={50} placeholder="Supplier bill no" value={billNo} onChange={(e) => setBillNo(e.target.value.toUpperCase())} />
         </div>
         <p className="pb-2 text-xs text-ink-500">
           {used.length} line{used.length === 1 ? '' : 's'}{newCount ? ` · ${newCount} new item${newCount === 1 ? '' : 's'} for Item Master` : ''}

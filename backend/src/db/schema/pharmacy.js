@@ -139,6 +139,9 @@ CREATE TABLE StockIn (
     IsActive         BIT NOT NULL DEFAULT 1,
     CreatedAt        DATETIME NOT NULL DEFAULT GETDATE()
 );
+-- The supplier's own bill / invoice number (optional).
+IF COL_LENGTH('dbo.StockIn','BillNo') IS NULL
+    ALTER TABLE dbo.StockIn ADD BillNo NVARCHAR(50) NULL;
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='StockInItem' AND xtype='U')
 CREATE TABLE StockInItem (
     LineId        INT IDENTITY(1,1) PRIMARY KEY,
