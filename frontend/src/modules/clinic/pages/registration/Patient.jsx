@@ -47,6 +47,9 @@ export default function Patient() {
     if (!NAME_PATTERN.test(form.name.trim())) return show('Name must contain letters only (periods allowed)', 'error');
     if (!form.mobileNo.trim()) return show('Mobile No is required', 'error');
     if (!MOBILE_PATTERN.test(form.mobileNo.trim())) return show('Mobile No must be exactly 10 digits', 'error');
+    if (String(form.age ?? '') !== '' && !(/^\d{1,3}$/.test(String(form.age)) && Number(form.age) <= 150)) {
+      return show('Age must be a number up to 150', 'error');
+    }
     setSaving(true);
     try {
       if (editId) {
@@ -146,7 +149,14 @@ export default function Patient() {
           </div>
           <div>
             <label className="label">Age</label>
-            <input type="number" min="0" className="input" value={form.age} onChange={update('age')} placeholder="Age in years" />
+            <input
+              className="input"
+              value={form.age}
+              onChange={(e) => setForm((f) => ({ ...f, age: e.target.value.replace(/\D/g, '').slice(0, 3) }))}
+              placeholder="Age in years (max 150)"
+              inputMode="numeric"
+              maxLength={3}
+            />
           </div>
           <div>
             <label className="label">Address</label>

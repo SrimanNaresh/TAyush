@@ -36,7 +36,11 @@ export default function ReportMedicalHistory() {
       />
 
       <div className="space-y-5">
-        <PatientPicker selected={selected} onSelect={onSelect} />
+        <PatientPicker
+          selected={selected}
+          onSelect={onSelect}
+          onClear={() => { setSelected(null); setData(null); }}
+        />
 
         {loading ? (
           <Spinner />

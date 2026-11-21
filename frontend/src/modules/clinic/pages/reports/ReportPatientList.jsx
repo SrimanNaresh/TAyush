@@ -64,11 +64,14 @@ export default function ReportPatientList() {
           <button className="btn-primary" onClick={applyFilter} disabled={loading}>
             {loading ? 'Loading...' : 'Filter'}
           </button>
-          {(fromDate || toDate) && (
-            <button className="btn-secondary" onClick={clearFilter} disabled={loading}>
-              <X size={16} /> Clear
-            </button>
-          )}
+          <button
+            className="btn-clear"
+            onClick={clearFilter}
+            disabled={loading || (!fromDate && !toDate)}
+            title="Clear the dates and show all patients again"
+          >
+            <X size={16} /> Clear
+          </button>
         </div>
         {loading ? (
           <Spinner />

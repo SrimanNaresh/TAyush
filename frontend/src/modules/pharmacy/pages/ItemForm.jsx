@@ -46,10 +46,9 @@ export function ItemFields({ form, setForm, editing, handlersFor, narrow = false
     </div>
   );
 
-  return (
+  const first = (
     <>
-      <div className={`grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 ${narrow ? 'lg:grid-cols-5' : editing ? 'lg:grid-cols-[2.4fr_1fr_1.6fr_repeat(7,minmax(0,1fr))]' : 'lg:grid-cols-[2.4fr_1fr_1.6fr_repeat(6,minmax(0,1fr))]'}`}>
-        {field('Item Name *', <input autoFocus={autoFocus} className={inp} value={form.name} onChange={onInput('name')} placeholder="e.g. Arnica Montana" />, narrow ? 'col-span-2' : 'col-span-2 sm:col-span-2 lg:col-span-1')}
+        {field('Item Name *', <input autoFocus={autoFocus} className={inp} value={form.name} onChange={onInput('name')} placeholder="e.g. Arnica Montana" />, narrow ? 'col-span-2' : 'col-span-2 sm:col-span-1')}
         {field('Pack', <input className={inp} value={form.pack} onChange={onInput('pack')} placeholder="10's" />)}
         {field('Type / Unit', <CellCombo className={combo} value={form.unit} onChange={set('unit')} placeholder="Pick or add" {...handlersFor('unit')} />)}
         {field('HSN', <input className={inp} value={form.hsnCode} onChange={onInput('hsnCode')} />)}
@@ -61,9 +60,11 @@ export function ItemFields({ form, setForm, editing, handlersFor, narrow = false
         {field('SGST %', <input type="number" min="0" max={MAX_GST} step="0.01" className={inp} value={form.sgstPercent} onChange={onInput('sgstPercent')} />)}
         {field('Rack', <input className={inp} value={form.rack} onChange={onInput('rack')} />)}
         {field('Box', <input className={inp} value={form.boxNo} onChange={onInput('boxNo')} />)}
-      </div>
+    </>
+  );
 
-      <div className={`mt-2 grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3 ${narrow ? 'lg:grid-cols-3' : 'lg:grid-cols-6'}`}>
+  const second = (
+    <>
         {field('Generic Name', <CellCombo className={combo} value={form.generic} onChange={set('generic')} placeholder="Pick or add" {...handlersFor('generic')} />)}
         {field('Manufacturer', <CellCombo className={combo} value={form.manufacturer} onChange={set('manufacturer')} placeholder="Pick or add" {...handlersFor('manufacturer')} />)}
         {field('Category', <CellCombo className={combo} value={form.category} onChange={set('category')} placeholder="Pick or add" {...handlersFor('category')} />)}
@@ -81,7 +82,24 @@ export function ItemFields({ form, setForm, editing, handlersFor, narrow = false
             <option value="Inactive">Inactive</option>
           </select>
         ))}
-      </div>
     </>
+  );
+
+  // Popup: two rows sized for the narrow box.
+  if (narrow) {
+    return (
+      <>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 lg:grid-cols-5">{first}</div>
+        <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3 lg:grid-cols-3">{second}</div>
+      </>
+    );
+  }
+
+  // Item Master page: every box the same width, 8 to a row on desktop.
+  return (
+    <div className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 lg:grid-cols-8">
+      {first}
+      {second}
+    </div>
   );
 }

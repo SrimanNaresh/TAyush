@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserCheck, ListChecks } from 'lucide-react';
 import { PageHeader, Toast } from '../../../../components/ui.jsx';
@@ -9,23 +8,20 @@ import { confirmApi } from '../../api.js';
 export default function ConfirmSearch() {
   const navigate = useNavigate();
   const { toast, show } = useToast();
-  const [selected, setSelected] = useState(null);
-  const [confirming, setConfirming] = useState(false);
 
   const addNew = (name, mobile) => {
     navigate('/clinic/registration/patient', { state: { prefill: { name, mobileNo: mobile }, fromConfirm: true } });
   };
 
-  const confirmPatient = async () => {
-    if (!selected) return;
-    setConfirming(true);
+  // Each match carries its own Confirm button; a confirmed patient leaves the list.
+  const confirmPatient = async (patient) => {
     try {
-      await confirmApi.create({ patientId: selected.PatientId });
-      show(`${selected.Name} confirmed for today`, 'success');
+      await confirmApi.create({ patientId: patient.PatientId });
+      show(`${patient.Name} confirmed for today`, 'success');
+      return true;
     } catch (err) {
       show(err.response?.data?.error || 'Confirm failed', 'error');
-    } finally {
-      setConfirming(false);
+      return false;
     }
   };
 
@@ -40,19 +36,11 @@ export default function ConfirmSearch() {
         }
       />
 
-      <PatientPicker selected={selected} onSelect={setSelected} onAddNew={addNew} />
-
-      {selected && (
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3">
-          <div>
-            <p className="text-sm font-semibold text-brand-800">{selected.Name}</p>
-            <p className="text-xs text-brand-600">{selected.MobileNo || 'No mobile'} · ID #{selected.PatientId}</p>
-          </div>
-          <button className="btn-primary" onClick={confirmPatient} disabled={confirming}>
-            <UserCheck size={16} /> {confirming ? 'Confirming...' : 'Confirm Patient'}
-          </button>
-        </div>
-      )}
+      <PatientPicker
+        onAddNew={addNew}
+        onClear={() => {}}
+        rowAction={{ label: 'Confirm Patient', busyLabel: 'Confirming...', icon: UserCheck, run: confirmPatient }}
+      />
 
       <Toast toast={toast} />
     </div>

@@ -38,6 +38,16 @@ export default function PatientRecords() {
     load(patient);
   };
 
+  // Clear: drop the patient, their documents and anything typed in Upload Document.
+  const clearAll = () => {
+    setSelected(null);
+    setDocs([]);
+    setFile(null);
+    setCategory('');
+    setDocumentDate(todayStr());
+    setPreviewDoc(null);
+  };
+
   const submitUpload = async (e) => {
     e.preventDefault();
     if (!selected) return show('Select a patient first', 'error');
@@ -88,7 +98,7 @@ export default function PatientRecords() {
     <div>
       <PageHeader title="Patient Records" />
 
-      <PatientPicker selected={selected} onSelect={selectPatient} />
+      <PatientPicker selected={selected} onSelect={selectPatient} onClear={clearAll} />
 
       {selected && (
         <>

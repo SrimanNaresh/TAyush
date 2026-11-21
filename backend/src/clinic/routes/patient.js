@@ -66,10 +66,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Age is optional; when given it must be a whole number from 0 to 150 (at most 3 digits).
+const AGE_ERROR = 'Age must be a number up to 150';
+const badAge = (age) => {
+  if (age === undefined || age === null || age === '') return false;
+  return !/^\d{1,3}$/.test(String(age).trim()) || Number(age) > 150;
+};
+
 router.post('/', async (req, res) => {
   try {
     const { name, mobileNo, address, age } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
+    if (badAge(age)) return res.status(400).json({ error: AGE_ERROR });
     const referral = readReferral(req.body);
     const pool = await getPool();
     const result = await pool
@@ -94,6 +102,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, mobileNo, address, age } = req.body;
+    if (badAge(age)) return res.status(400).json({ error: AGE_ERROR });
     const referral = readReferral(req.body);
     const pool = await getPool();
     const result = await pool

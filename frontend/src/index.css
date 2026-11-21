@@ -67,6 +67,10 @@
   .btn-danger {
     @apply btn border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 active:scale-[0.98];
   }
+  /* Clear: empties a screen's search boxes and results (Confirm Patient, reports). */
+  .btn-clear {
+    @apply btn border border-orange-500 bg-orange-500 font-bold text-white shadow-sm [text-shadow:0_1px_1px_rgb(0_0_0/0.25)] hover:bg-orange-600 active:scale-[0.98] disabled:hover:bg-orange-500;
+  }
   .btn-ghost {
     @apply btn rounded-lg text-ink-500 hover:bg-ink-100 hover:text-ink-700;
   }

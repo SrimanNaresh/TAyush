@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Printer, CalendarRange, Search } from 'lucide-react';
+import { Printer, CalendarRange, Search, X } from 'lucide-react';
 import { Spinner, EmptyState, Toast, CardHeader } from '../../../../components/ui.jsx';
 import { useToast } from '../../../../hooks/useToast.js';
 import { reportApi } from '../../api.js';
@@ -34,6 +34,14 @@ export default function ReportVisitList() {
     load(fromDate, toDate);
   };
 
+  // Back to how the screen opens: today's dates and today's visits.
+  const clear = () => {
+    const today = todayStr();
+    setFromDate(today);
+    setToDate(today);
+    load(today, today);
+  };
+
   return (
     <div>
       <div className="card">
@@ -61,6 +69,14 @@ export default function ReportVisitList() {
           </div>
           <button className="btn-primary" onClick={generate} disabled={loading}>
             <Search size={16} /> {loading ? 'Loading...' : 'Generate Report'}
+          </button>
+          <button
+            className="btn-clear"
+            onClick={clear}
+            disabled={loading}
+            title="Reset the dates to today and show today's visits"
+          >
+            <X size={16} /> Clear
           </button>
         </div>
 

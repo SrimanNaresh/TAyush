@@ -142,7 +142,7 @@ function AppLayout({ appName }) {
 
       <div className="flex min-h-0 flex-1">
         {navSide && <SideNav />}
-        <main className="no-scrollbar min-w-0 flex-1 overflow-y-auto px-4 pb-4 pt-2 lg:px-6 lg:pb-6 lg:pt-2">
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-4 pt-2 lg:px-6 lg:pb-6 lg:pt-2">
           <div className="w-full animate-fade-in">
             {/* Each page's code loads when it's first opened, not all up front. */}
             <Suspense fallback={<PageLoading />}>

@@ -24,13 +24,13 @@ const rowToForm = (r) => ({
 // Same checks the server runs; returns the first problem or null.
 function validate(f) {
   if (!f.vendorName.trim()) return 'Vendor name is required';
-  if (!f.address.trim()) return 'Address is required';
   if (!f.contactNo.trim()) return 'Mobile No is required';
   if (!isValidNumeric(f.contactNo)) return 'Mobile No must contain numbers only';
   if (!isValidNumeric(f.alternateNo)) return 'Phone No must contain numbers only';
   if (f.pincode && !/^\d{6}$/.test(f.pincode)) return 'Pin code must be 6 digits';
   if (f.gstNo && !/^[0-9A-Z]{15}$/.test(f.gstNo)) return 'GSTIN must be 15 letters / digits';
   if (!isValidEmail(f.email)) return 'Enter a valid email address';
+  if (!f.address.trim()) return 'Address is required';
   return null;
 }
 
@@ -104,26 +104,19 @@ export default function VendorMaster() {
             title={editingId ? 'Edit Vendor' : 'Vendor Master'}
             subtitle={editingId ? 'Update or delete this vendor' : 'Register a new vendor'}
           />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            <div className="col-span-2 sm:col-span-1">
               <label className="label">Vendor name *</label>
               <input className="input" value={form.vendorName} onChange={update('vendorName')} placeholder="e.g. Sri Murugan Medicals" />
             </div>
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <label className="label">Contact person</label>
               <input className="input" value={form.contactPerson} onChange={update('contactPerson')} placeholder="Person to contact" />
             </div>
-            <div>
-              <label className="label">Address *</label>
-              <textarea className="input" rows={2} value={form.address} onChange={update('address')} placeholder="Vendor address" />
-            </div>
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <label className="label">Email</label>
               <input type="email" className="input" value={form.email} onChange={update('email')} placeholder="e.g. orders@vendor.com" />
             </div>
-          </div>
-
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             <div className="col-span-2 sm:col-span-1">
               <label className="label">State</label>
               <select className="input" value={form.state} onChange={update('state')}>
@@ -155,15 +148,16 @@ export default function VendorMaster() {
               <label className="label">DL No 2</label>
               <input className="input" value={form.dlNo2} onChange={updateUpper('dlNo2')} placeholder="Drug licence 2" />
             </div>
-          </div>
-
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             <div>
               <label className="label">Status</label>
               <select className="input" value={form.status} onChange={update('status')}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
+            </div>
+            <div className="col-span-2 sm:col-span-4 lg:col-span-3">
+              <label className="label">Address *</label>
+              <textarea className="input" rows={2} value={form.address} onChange={update('address')} placeholder="Vendor address" />
             </div>
           </div>
 

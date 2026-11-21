@@ -191,7 +191,7 @@ export default function VitalSign() {
               Already recorded today for this patient — editing that record instead of creating a new one.
             </p>
           )}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             <div>
               <label className="label">Height (cm)</label>
               <input type="number" step="0.1" className="input" value={form.height} onChange={update('height')} />
@@ -252,7 +252,7 @@ export default function VitalSign() {
                 <div className="w-full">
                   <label className="label">Photos * (up to {MAX_PHOTOS})</label>
                   <div className="flex flex-wrap gap-2">
-                    <label className="btn-secondary cursor-pointer">
+                    <label className="btn-secondary relative cursor-pointer">
                       <Camera size={16} /> Take Photo
                       <input
                         type="file"
@@ -266,7 +266,7 @@ export default function VitalSign() {
                         }}
                       />
                     </label>
-                    <label className="btn-secondary cursor-pointer">
+                    <label className="btn-secondary relative cursor-pointer">
                       <ImagePlus size={16} /> Choose from Gallery
                       <input
                         type="file"

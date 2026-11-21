@@ -1,18 +1,42 @@
 import { useState } from 'react';
-import { Search, User, Phone, Check, UserPlus } from 'lucide-react';
+import { Search, User, Phone, Check, UserPlus, X } from 'lucide-react';
 import { patientApi } from '../api.js';
 import { Spinner } from '../../../components/ui.jsx';
 
 /**
  * Search patients by name and/or mobile. When multiple patients share a
  * mobile number, all matches are listed so the user can pick the right one.
+ * Pass `onClear` to show a Clear button: it empties both boxes and the
+ * matches, then calls onClear so the screen can drop its selected patient.
+ * Pass `rowAction` ({ label, busyLabel, icon, run }) to put a button on each
+ * match instead of selecting it; when `run(patient)` resolves true the patient
+ * is taken off the list and both search boxes are emptied.
  */
-export default function PatientPicker({ selected, onSelect, onAddNew }) {
+export default function PatientPicker({ selected, onSelect, onAddNew, onClear, rowAction }) {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [busyId, setBusyId] = useState(null);
+
+  const runAction = async (p) => {
+    setBusyId(p.PatientId);
+    try {
+      if (await rowAction.run(p)) {
+        setName('');
+        setMobile('');
+        setResults((list) => {
+          const rest = list.filter((r) => r.PatientId !== p.PatientId);
+          // Last one done: hide the list instead of showing "No matching patients".
+          if (!rest.length) setSearched(false);
+          return rest;
+        });
+      }
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   // Letters and single spaces only — strips anything else, then collapses
   // repeated spaces so "John   Doe" typed fast still comes out "John Doe".
@@ -40,6 +64,14 @@ export default function PatientPicker({ selected, onSelect, onAddNew }) {
     }
   };
 
+  const clear = () => {
+    setName('');
+    setMobile('');
+    setResults([]);
+    setSearched(false);
+    onClear?.();
+  };
+
   return (
     <div className="card">
       <form onSubmit={doSearch} className="flex flex-wrap items-end gap-3">
@@ -57,6 +89,17 @@ export default function PatientPicker({ selected, onSelect, onAddNew }) {
             <input type="tel" inputMode="numeric" className="input pl-9" placeholder="Mobile" value={mobile} onChange={onMobileChange} />
           </div>
         </div>
+        {onClear && (
+          <button
+            type="button"
+            className="btn-clear"
+            onClick={clear}
+            disabled={!name && !mobile && !searched && !selected}
+            title="Clear the boxes and the matching patients"
+          >
+            <X size={16} /> Clear
+          </button>
+        )}
         <button type="submit" className="btn-primary">
           <Search size={16} /> Search
         </button>
@@ -91,7 +134,23 @@ export default function PatientPicker({ selected, onSelect, onAddNew }) {
             </p>
           )}
           <div className="divide-y divide-slate-100 overflow-hidden rounded-lg border border-slate-100">
-            {results.map((p) => (
+            {rowAction && results.map((p) => {
+              const ActionIcon = rowAction.icon;
+              return (
+                <div key={p.PatientId} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-700">{p.Name}</p>
+                    <p className="text-xs text-slate-400">
+                      {p.MobileNo || 'No mobile'} · {p.Address || 'No address'} · ID #{p.PatientId}
+                    </p>
+                  </div>
+                  <button type="button" className="btn-primary" onClick={() => runAction(p)} disabled={busyId !== null}>
+                    {ActionIcon && <ActionIcon size={16} />} {busyId === p.PatientId ? rowAction.busyLabel : rowAction.label}
+                  </button>
+                </div>
+              );
+            })}
+            {!rowAction && results.map((p) => (
               <button
                 key={p.PatientId}
                 onClick={() => onSelect(p)}
