@@ -231,6 +231,14 @@ function discPercent(text, o) {
   return qty > 0 ? pct((v / (mrp * qty)) * 100) : '';
 }
 
+// A tax cell printed as CGST + SGST in one ("9%+9%", "2.5% + 2.5%"; OCR may
+// add a stray sign: "2.5%-+2.5%", "2.5%++2.5%") -> [cgst, sgst], else null.
+const TAX_PAIR = /^(\d+(?:\.\d+)?)\s*%?\s*[-+]*\+[-+]*\s*(\d+(?:\.\d+)?)\s*%?$/;
+function taxPair(text) {
+  const m = TAX_PAIR.exec(String(text || '').replace(/\s+/g, ' ').trim());
+  return m ? [Number(m[1]), Number(m[2])] : null;
+}
+
 // One bill line through the column matches -> the fields of a scanned row.
 function fieldsOf(cells, map, targets = TARGETS) {
   const o = {};
@@ -238,6 +246,15 @@ function fieldsOf(cells, map, targets = TARGETS) {
   if (o.disc != null) o.disc = discPercent(cells[map.disc], o);
   const r2 = (n) => String(Math.round(n * 100) / 100);
   const n = (k) => Number(o[k]) || 0;
+  // "9%+9%" split: under GST% it's the GST (18); under CGST% / SGST% it's both
+  // halves (the other half filled in unless it has its own column).
+  for (const k of ['gst', 'cgst', 'sgst']) {
+    const pair = map[k] != null ? taxPair(cells[map[k]]) : null;
+    if (!pair) continue;
+    if (k === 'gst') { o.gst = r2(pair[0] + pair[1]); continue; }
+    if (k === 'cgst' || map.cgst == null) o.cgst = r2(pair[0]);
+    if (k === 'sgst' || map.sgst == null) o.sgst = r2(pair[1]);
+  }
   // On the order P.Rate = MRP less Disc % (the order puts that right when the
   // line goes on it). No P.Rate on the bill: the rate is the Amount / Qty, or
   // the Old Price (net rate) column.
@@ -764,6 +781,7 @@ export default function ScanBillModal({ open, onClose, onAdded, forOrder = false
               setTable((t) => ({ heads: t.heads.filter((_, c) => c !== i), rows: t.rows.map((r) => r.filter((_, c) => c !== i)) }));
               setColMap((m) => Object.fromEntries(Object.entries(m).filter(([, c]) => c !== i).map(([k, c]) => [k, c > i ? c - 1 : c])));
             }}
+            onRemoveRow={(r) => setTable((t) => ({ ...t, rows: t.rows.filter((_, x) => x !== r) }))}
             disabled={working}
             onBack={() => setStep('select')}
             onDone={applyColumns}
@@ -964,7 +982,7 @@ function BoxSelect({ page, box, onBox, disabled, zoom = 1, moving = false, forOr
 // tile, then the column — or the column, then the tile — for a phone). A
 // column holds one tile and a tile sits on one column; dropping a tile that's
 // already placed moves it. Tiles that clearly match are placed already.
-function ColumnMatch({ table, map, setMap, onRemoveCol, disabled, onBack, onDone, hasRows, targets = TARGETS, forStock = false, forIps = false }) {
+function ColumnMatch({ table, map, setMap, onRemoveCol, onRemoveRow, disabled, onBack, onDone, hasRows, targets = TARGETS, forStock = false, forIps = false }) {
   // Tapped and waiting for its partner: { tile: key } or { col: index }.
   const [picked, setPicked] = useState(null);
   const [over, setOver] = useState(null); // column a tile is being dragged over
@@ -1109,7 +1127,21 @@ function ColumnMatch({ table, map, setMap, onRemoveCol, disabled, onBack, onDone
             <tbody>
               {rows.map((cells, r) => (
                 <tr key={r}>
-                  <td className={`${cell} text-center text-ink-400`}>{r + 1}</td>
+                  <td className={`${cell} whitespace-nowrap text-center text-ink-400`}>
+                    {/* Remove a line read from the bill that isn't an item (a total, a stray line). */}
+                    <span className="inline-flex items-center gap-1">
+                      {r + 1}
+                      <button
+                        type="button"
+                        className="rounded p-0.5 text-ink-300 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+                        title="Remove this line"
+                        disabled={disabled || rows.length <= 1}
+                        onClick={() => onRemoveRow(r)}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </span>
+                  </td>
                   {cells.map((t, i) => (
                     <td key={i} className={`${cell} px-1.5 ${tileOn(i) ? 'text-ink-800' : 'text-ink-400'} ${over === i ? 'bg-brand-50' : ''}`} {...dropProps(i)}>{t}</td>
                   ))}

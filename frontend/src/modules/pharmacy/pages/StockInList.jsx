@@ -218,7 +218,7 @@ export default function StockInList() {
                           <tr key={l.LineId}>
                             <td className={`${cell} pin pl-7`}>{l.BatchNo}</td>
                             <td className={cell}>{expLabel(l.ExpDate)}</td>
-                            <td className={`${cell} text-brand-700`} title={dateLabel(l.InDate)}>{l.StockInNo}</td>
+                            <td className={`${cell} text-brand-700`} title={dateLabel(l.InDate)}>{l.StockInNo}{l.BillNo && <span className="block text-11 text-ink-500">Bill {l.BillNo}</span>}</td>
                             <td className={cell}>{l.VendorName}</td>
                             {amountCells(l)}
                             {isAdmin && (
@@ -248,7 +248,7 @@ export default function StockInList() {
                             {k === 0 && (
                               <td className={`${cell} pin align-middle`} rowSpan={ls.length}>
                                 <div className="font-semibold text-brand-700">{l.StockInNo}</div>
-                                <div className="text-11 text-ink-500">{l.VendorName} · {l.OrderNo}</div>
+                                <div className="text-11 text-ink-500">{l.VendorName} · {l.OrderNo}{l.BillNo ? ` · Bill ${l.BillNo}` : ''}</div>
                               </td>
                             )}
                             <td className={cell}>{l.ItemName}</td>
